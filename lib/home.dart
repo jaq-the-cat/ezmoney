@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'infoio.dart';
 
 class HomePage extends StatefulWidget {
+
+    final double fontSize = 16.0;
+    final double margin = 10.0;
+
     @override
     HomePageState createState() => HomePageState();
 }
@@ -12,8 +16,11 @@ class HomePageState extends State<HomePage> {
         String snet = net.toStringAsFixed(2);
         if (snet.startsWith('-'))
             snet = snet.substring(1, snet.length);
-        return snet;
+        return "\$" + snet;
     }
+
+    String getDateString(DateTime dt) =>
+        dt.toString().split(' ').first.replaceAll('-', '/');
 
     @override
     Widget build(BuildContext context) {
@@ -28,19 +35,36 @@ class HomePageState extends State<HomePage> {
                     return ListView(
                         children: List<Widget>.from(snapshot.data.map((net) {
                             return Container(
-                                margin: EdgeInsets.all(15),
+                                margin: EdgeInsets.only(
+                                    left: widget.margin, top: widget.margin, right: widget.margin),
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                         Padding(
                                             padding: EdgeInsets.all(10),
-                                            child: Text(toMoneyString(net)),
+                                            child: Text(
+                                                toMoneyString(net),
+                                                style: TextStyle(
+                                                    fontSize:  widget.fontSize,
+                                                )
+                                            ),
                                         ),
-                                        Container(
-                                            padding: EdgeInsets.all(10),
-                                            color: net >= 0 ? Colors.green : Colors.red,
-                                            child: Icon(net >= 0 ? Icons.add : Icons.remove),
-                                        )
+                                        Row(
+                                            children: <Widget>[
+                                                Text(
+                                                    getDateString(DateTime.now()),
+                                                    style: TextStyle(
+                                                        color:  Colors.white24,
+                                                    ),
+                                                ),
+                                                SizedBox(width: 10),
+                                                Container(
+                                                    padding: EdgeInsets.all(10),
+                                                    color: net >= 0 ? Colors.green : Colors.red,
+                                                    child: Icon(net >= 0 ? Icons.add : Icons.remove),
+                                                )
+                                            ]
+                                        ),
                                     ],
                                 ),
                                 decoration: BoxDecoration(
@@ -57,12 +81,12 @@ class HomePageState extends State<HomePage> {
             ),
             persistentFooterButtons: <Widget>[
                 IconButton(
-                    icon: Icon(Icons.remove),
+                    icon: Icon(Icons.add),
                     color: Colors.deepOrange,
                     onPressed: () {},
                 ),
                 IconButton(
-                    icon: Icon(Icons.add),
+                    icon: Icon(Icons.remove),
                     color: Colors.deepOrange,
                     onPressed: () {},
                 ),
