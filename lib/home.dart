@@ -14,9 +14,13 @@ class HomePageState extends State<HomePage> {
 
     String toMoneyString(double net) {
         String snet = net.toStringAsFixed(2);
-        if (snet.startsWith('-'))
+        if (snet.startsWith('-')) {
             snet = snet.substring(1, snet.length);
-        return "\$" + snet;
+            snet = "-\$" + snet;
+        } else {
+            snet = "\$" + snet;
+        }
+        return snet;
     }
 
     String getDateString(DateTime dt) =>
