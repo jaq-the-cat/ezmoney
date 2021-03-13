@@ -33,8 +33,9 @@ class HomePageState extends State<HomePage> {
                 builder: (context, snapshot) {
                     if (!snapshot.hasData) return Container();
                     return ListView(
-                        children: List<Widget>.from(snapshot.data.keys.map((date) {
-                            double net = snapshot.data[date];
+                        children: List<Widget>.from(snapshot.data.map((pair) {
+                            String date = getDateString(pair.first);
+                            double net = pair.last;
                             return Container(
                                 margin: EdgeInsets.only(
                                     left: widget.margin, top: widget.margin, right: widget.margin),
@@ -53,7 +54,7 @@ class HomePageState extends State<HomePage> {
                                         Row(
                                             children: <Widget>[
                                                 Text(
-                                                    getDateString(date),
+                                                    date,
                                                     style: TextStyle(
                                                         color:  Colors.white24,
                                                     ),
