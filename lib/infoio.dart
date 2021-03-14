@@ -1,21 +1,15 @@
-Future<List<List<dynamic>>> getDailyInfo([int limit = 25]) async {
-    return [
-        [DateTime.now().add(Duration(days: 0)), 10.5],
-        [DateTime.now().add(Duration(days: 1)), 0.0],
-        [DateTime.now().add(Duration(days: 2)), -1.2],
-        [DateTime.now().add(Duration(days: 3)), 20.0],
-        [DateTime.now().add(Duration(days: 4)), 2000.0],
-    ];
+import 'dart:math';
+
+final rng = new Random();
+
+Future<List<List<dynamic>>> getMonthlyInfo() async {
+    return List.generate(rng.nextInt(31), (i) =>
+        [DateTime.now().add(Duration(days: i)), (rng.nextDouble() - 0.5) * 100]);
 }
 
 DateTime toMonth(DateTime dt) => DateTime(dt.year, dt.month);
 
-Future<List<List<dynamic>>> getMonthlyInfo([int limit = 25]) async {
-    return [
-        [toMonth(DateTime.now()), 10.5],
-        [toMonth(DateTime.now()), 0.0],
-        [toMonth(DateTime.now()), -1.2],
-        [toMonth(DateTime.now()), 20.0],
-        [toMonth(DateTime.now()), 2000.0],
-    ];
+Future<List<List<dynamic>>> getYearlyInfo() async {
+    return List.generate(rng.nextInt(31), (i) =>
+        [toMonth(DateTime.now().add(Duration(days: 31*i))), (rng.nextDouble() - 0.5) * 100]);
 }

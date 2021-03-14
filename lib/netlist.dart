@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'infoio.dart';
 
+final double _fontSize = 16.0;
+final double _margin = 10.0;
+
 final _months = [
     "January",
     "February",
@@ -38,25 +41,26 @@ String _toMoneyString(double net) {
 
 Widget genNetList({bool isDay = true}) {
     return FutureBuilder(
-        future: isDay ? getDailyInfo() : getMonthlyInfo(),
+        future: isDay ? getMonthlyInfo() : getYearlyInfo(),
         builder: (context, snapshot) {
             if (!snapshot.hasData) return Container();
-            return ListView(
-                children: List<Widget>.from(snapshot.data.map((pair) =>
-                    moneyItem(net: pair.last,
-                        date: isDay ? _toDateString(pair.first) : _toMonthString(pair.first))
-                )),
+            return Container(
+                margin: EdgeInsets.only(top: _margin),
+                child: ListView(
+                    children: List<Widget>.from(snapshot.data.map((pair) =>
+                        moneyItem(net: pair.last,
+                            date: isDay ? _toDateString(pair.first) : _toMonthString(pair.first))
+                    )),
+                )
             );
         },
     );
 }
 
 Widget moneyItem({double net, String date}) {
-    final double fontSize = 16.0;
-    final double margin = 10.0;
     return Container(
         margin: EdgeInsets.only(
-            left: margin, top: margin, right: margin),
+            left: _margin, bottom: _margin, right: _margin),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -65,7 +69,7 @@ Widget moneyItem({double net, String date}) {
                     child: Text(
                         _toMoneyString(net),
                         style: TextStyle(
-                            fontSize: fontSize,
+                            fontSize: _fontSize,
                         )
                     ),
                 ),
