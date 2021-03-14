@@ -10,6 +10,7 @@ class App extends StatelessWidget {
       title: 'EZMONEY',
       theme: ThemeData(
         primarySwatch: Colors.deepOrange,
+        accentColor: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         brightness: Brightness.dark,
       ),

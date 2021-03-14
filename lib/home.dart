@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'infoio.dart';
 import 'netlist.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,9 +11,8 @@ class HomePageState extends State<HomePage> {
     @override
     Widget build(BuildContext context) {
         final List<List<Widget>> tabs = [
-            [Tab(icon: Icon(Icons.calendar_today)), netListFromInfo(getInfo(7))],
-            [Tab(icon: Icon(Icons.calendar_today)), netListFromInfo(getInfo(30))],
-            [Tab(icon: Icon(Icons.calendar_today)), netListFromInfo(getInfo(365))],
+            [Tab(child: Text("Month")), genNetList(isDay: true)],
+            [Tab(child: Text("Year")), genNetList(isDay: false)],
         ];
         return DefaultTabController(
             length: tabs.length,
