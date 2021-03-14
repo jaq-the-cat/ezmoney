@@ -9,32 +9,38 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-
     @override
     Widget build(BuildContext context) {
-        return Scaffold(
-            appBar: AppBar(
-                title: Text("EZMONEY"),
-            ),
-            body: FutureBuilder(
-                future: getInfo(),
-                builder: (context, snapshot) {
-                    if (!snapshot.hasData) return Container();
-                    return netList(snapshot.data);
-                },
-            ),
-            persistentFooterButtons: <Widget>[
-                IconButton(
-                    icon: Icon(Icons.add),
-                    color: Colors.deepOrange,
-                    onPressed: () {},
+        final List<List<Widget>> tabs = [
+            [Tab(icon: Icon(Icons.calendar_today)), netListFromInfo(getInfo(7))],
+            [Tab(icon: Icon(Icons.calendar_today)), netListFromInfo(getInfo(30))],
+            [Tab(icon: Icon(Icons.calendar_today)), netListFromInfo(getInfo(365))],
+        ];
+        return DefaultTabController(
+            length: tabs.length,
+            child: Scaffold(
+                appBar: AppBar(
+                    title: Text("EZMONEY"),
+                    bottom: TabBar(
+                        tabs: List<Widget>.from(tabs.map((t) => t.first)),
+                    ),
                 ),
-                IconButton(
-                    icon: Icon(Icons.remove),
-                    color: Colors.deepOrange,
-                    onPressed: () {},
+                body: TabBarView(
+                    children: List<Widget>.from(tabs.map((t) => t.last)),
                 ),
-            ]
+                persistentFooterButtons: <Widget>[
+                    IconButton(
+                        icon: Icon(Icons.add),
+                        color: Colors.deepOrange,
+                        onPressed: () {},
+                    ),
+                    IconButton(
+                        icon: Icon(Icons.remove),
+                        color: Colors.deepOrange,
+                        onPressed: () {},
+                    ),
+                ],
+            ),
         );
     }
 }
