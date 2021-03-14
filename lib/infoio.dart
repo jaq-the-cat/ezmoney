@@ -1,6 +1,16 @@
 import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final rng = new Random();
+
+DateTime _toSimple(DateTime dt) => new DateTime(dt.year, dt.month, dt.day);
+String _today() => _toSimple(DateTime.now()).toIso8601String();
+
+Future<void> addInfo(double money) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    double old = prefs.getDouble(_today()) ?? 0.0;
+    prefs.setDouble(_today(), old + money);
+}
 
 Future<List<List<dynamic>>> getMonthlyInfo() async {
     return List.generate(rng.nextInt(31), (i) =>
