@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'infoio.dart';
 
+enum NLType {
+    Month,
+    Year,
+    AllTime,
+}
+
 final double _fontSize = 16.0;
 final double _margin = 10.0;
+
+String _toDateString(DateTime dt) => dt.toString().split(' ').first.replaceAll('-', '/');
+
+String _toMonthString(DateTime dt) => _months[dt.month-1];
+
+String _toYearString(DateTime dt) => dt.toString().split('-').first;
 
 final _months = [
     "January",
@@ -19,14 +31,29 @@ final _months = [
     "December",
 ];
 
-enum NetListTypes {
-    Day,
-    Month,
+Future _typeToInfo(NLType type) {
+    switch(type) {
+        case NLType.Month:
+            return getMonthlyInfo();
+        case NLType.Year:
+            return getYearlyInfo();
+        case NLType.AllTime:
+            return getAllTimeInfo();
+    }
+    return null;
 }
 
-String _toDateString(DateTime dt) => dt.toString().split(' ').first.replaceAll('-', '/');
-
-String _toMonthString(DateTime dt) => _months[dt.month-1];
+String _dtToString(NLType type, DateTime dt) {
+    switch(type) {
+        case NLType.Month:
+            return _toDateString(dt);
+        case NLType.Year:
+            return _toMonthString(dt);
+        case NLType.AllTime:
+            return _toYearString(dt);
+    }
+    return null;
+}
 
 String _toMoneyString(double net) {
     String snet = net.toStringAsFixed(2);
@@ -39,9 +66,9 @@ String _toMoneyString(double net) {
     return snet;
 }
 
-Widget genNetList({bool isDay = true}) {
+Widget genNetList(NLType type) {
     return FutureBuilder(
-        future: isDay ? getMonthlyInfo() : getYearlyInfo(),
+        future: _typeToInfo(type),
         builder: (context, snapshot) {
             if (!snapshot.hasData) return Container();
             return Container(
@@ -49,7 +76,7 @@ Widget genNetList({bool isDay = true}) {
                 child: ListView(
                     children: List<Widget>.from(snapshot.data.map((pair) =>
                         moneyItem(net: pair.last,
-                            date: isDay ? _toDateString(pair.first) : _toMonthString(pair.first))
+                            date: _dtToString(type, pair.first))
                     )),
                 )
             );

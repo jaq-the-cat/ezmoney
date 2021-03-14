@@ -11,8 +11,9 @@ class HomePageState extends State<HomePage> {
     @override
     Widget build(BuildContext context) {
         final List<List<Widget>> tabs = [
-            [Tab(child: Text("Month")), genNetList(isDay: true)],
-            [Tab(child: Text("Year")), genNetList(isDay: false)],
+            [Tab(child: Text("Month")), genNetList(NLType.Month)],
+            [Tab(child: Text("Year")), genNetList(NLType.Year)],
+            [Tab(child: Text("All Time")), genNetList(NLType.AllTime)],
         ];
         return DefaultTabController(
             length: tabs.length,
