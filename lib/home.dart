@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'netlist.dart';
+import 'infoio.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -29,14 +30,14 @@ class HomePageState extends State<HomePage> {
                 ),
                 floatingActionButton: FloatingActionButton(
                     child: Icon(Icons.add),
-                    onPressed: () { _moneyDialog(context, (e) {}); },
+                    onPressed: () => _moneyDialog(context).then((v) => setState(() {})),
                 ),
             ),
         );
     }
 }
 
-Future<String> _moneyDialog(BuildContext context, void Function(String) onConfirm) {
+Future<String> _moneyDialog(BuildContext context) {
     final ctrl = TextEditingController();
     return showDialog<String>(
         context: context,
@@ -75,7 +76,7 @@ Future<String> _moneyDialog(BuildContext context, void Function(String) onConfir
                                         TextButton(
                                             child: Text("ADD"),
                                             onPressed: () {
-                                                onConfirm(ctrl.text);
+                                                addInfo(double.parse(ctrl.text));
                                                 Navigator.of(context).pop(ctrl.text);
                                             },
                                         ),
