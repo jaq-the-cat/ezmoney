@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
+import 'infoio.dart';
 
-void main() => runApp(App());
+void main() {
+    initDatabase();
+    runApp(App());
+}
 
 class App extends StatelessWidget {
   @override

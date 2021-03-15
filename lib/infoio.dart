@@ -1,14 +1,18 @@
-import 'dart:math';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter/material.dart';
+import 'testdata.dart';
 import 'package:path/path.dart' as path;
-
-final rng = new Random();
 
 final Future<Database> _database = (() async => openDatabase(
     path.join(await getDatabasesPath(), 'data.db'),
     onCreate: (db, version) => db.execute("CREATE TABLE mone(dt INTEGER, money REAL)"),
     version:  1,
 ))();
+
+void initDatabase() {
+    WidgetsFlutterBinding.ensureInitialized();
+    populateWithTestData(_database);
+}
 
 int _firstDayOfMonth(DateTime dt) =>
     DateTime(dt.year, dt.month, 1).millisecondsSinceEpoch;
@@ -17,6 +21,7 @@ int _firstDayOfYear(DateTime dt) =>
     DateTime(dt.year).millisecondsSinceEpoch;
 
 DateTime _toSimple(DateTime dt) => new DateTime(dt.year, dt.month, dt.day);
+
 DateTime _today() => _toSimple(DateTime.now());
 
 Future<void> addInfo(double money) async {

@@ -1,0 +1,44 @@
+import 'package:sqflite/sqflite.dart';
+import 'dart:math';
+
+final rng = new Random();
+
+void populateWithTestData(Future<Database> database) async {
+    final Database db = await database;
+    db.execute('DELETE FROM mone');
+    (await _getMonthlyInfo()).forEach((e) => addInfo(db, e['dt'], e['money']));
+    (await _getYearlyInfo()).forEach((e) => addInfo(db, e['dt'], e['money']));
+    (await _getAllTimeInfo()).forEach((e) => addInfo(db, e['dt'], e['money']));
+}
+
+Future<void> addInfo(Database db, int dt, double money) async {
+    db.insert(
+        'mone',
+        {'dt': dt, 'money': money},
+        conflictAlgorithm:  ConflictAlgorithm.replace,
+    );
+}
+
+DateTime toMonth(DateTime dt) => DateTime(dt.year, dt.month);
+DateTime toYear(DateTime dt) => DateTime(dt.year);
+
+Future<List<Map<String, dynamic>>> _getMonthlyInfo() async {
+    return List.generate(rng.nextInt(31), (i) => {
+        'dt': DateTime.now().subtract(Duration(days: i)).millisecondsSinceEpoch,
+        'money': (rng.nextDouble() - 0.5) * 100
+    });
+}
+
+Future<List<Map<String, dynamic>>> _getYearlyInfo() async {
+    return List.generate(rng.nextInt(31), (i) => {
+        'dt': toMonth(DateTime.now().subtract(Duration(days: 31*i))).millisecondsSinceEpoch,
+        'money': (rng.nextDouble() - 0.5) * 100
+    });
+}
+
+Future<List<Map<String, dynamic>>> _getAllTimeInfo() async {
+    return List.generate(rng.nextInt(10), (i) => {
+        'dt': toYear(DateTime.now().subtract(Duration(days: 365*i))).millisecondsSinceEpoch,
+        'money': (rng.nextDouble() - 0.5) * 100
+    });
+}
