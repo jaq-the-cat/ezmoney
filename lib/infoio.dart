@@ -23,16 +23,17 @@ Future<void> addInfo(double money) async {
     final Database db = await database;
     final int mse = _today().millisecondsSinceEpoch;
     final queryResult = await db.query('mone', where: '"dt" == ?', whereArgs: [mse]);
-    if (queryResult.isNotEmpty) {
+    if (queryResult.isEmpty) {
         db.insert(
             'mone',
             {'dt': mse, 'money': money},
             conflictAlgorithm:  ConflictAlgorithm.replace,
         );
     } else {
+        double pmoney = queryResult.single['money'];
         db.update(
             'mone',
-            {'money': int.parse(queryResult.single['money']) + money},
+            {'money': pmoney + money},
             where: '"dt" == ?',
             whereArgs: [mse],
             conflictAlgorithm:  ConflictAlgorithm.replace,
