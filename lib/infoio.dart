@@ -1,6 +1,14 @@
 import 'dart:math';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart' as path;
 
 final rng = new Random();
+
+final Future<Database> database = (() async => openDatabase(
+    path.join(await getDatabasesPath(), 'data.db'),
+    onCreate: (db, version) => db.execute("CREATE TABLE mone(dt INTEGER, money REAL)"),
+    version:  1,
+))();
 
 DateTime _firstDayOfMonth(DateTime dt) =>
     DateTime(dt.year, dt.month, 1);
@@ -8,12 +16,28 @@ DateTime _firstDayOfMonth(DateTime dt) =>
 DateTime _firstDayOfYear(DateTime dt) =>
     DateTime(dt.year);
 
-
-
 DateTime _toSimple(DateTime dt) => new DateTime(dt.year, dt.month, dt.day);
-String _today() => _toSimple(DateTime.now()).toIso8601String();
+DateTime _today() => _toSimple(DateTime.now());
 
 Future<void> addInfo(double money) async {
+    final Database db = await database;
+    final int mse = _today().millisecondsSinceEpoch;
+    final queryResult = await db.query('mone', where: '"dt" == ?', whereArgs: [mse]);
+    if (queryResult.isNotEmpty) {
+        db.insert(
+            'mone',
+            {'dt': mse, 'money': money},
+            conflictAlgorithm:  ConflictAlgorithm.replace,
+        );
+    } else {
+        db.update(
+            'mone',
+            {'money': int.parse(queryResult.single['money']) + money},
+            where: '"dt" == ?',
+            whereArgs: [mse],
+            conflictAlgorithm:  ConflictAlgorithm.replace,
+        );
+}
 }
 
 Future<List<List<dynamic>>> getMonthlyInfo() async {
