@@ -49,7 +49,7 @@ Future<void> addInfo(double money) async {
 Future<List<Map<String, dynamic>>> _doMoneQuery([int timestamp]) async {
     final Database db = await _database;
     return List<Map<String, dynamic>>.from(await db.query('mone',
-        where: '"dt" > ?',
+        where: '"dt" >= ?',
         whereArgs: [timestamp ?? 0],
     ));
 }

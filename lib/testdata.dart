@@ -32,14 +32,16 @@ Future<List<Map<String, dynamic>>> _getMonthlyInfo() async {
 }
 
 Future<List<Map<String, dynamic>>> _getYearlyInfo() async {
-    return List.generate(rng.nextInt(31), (i) => {
-        'dt': toMonth(DateTime.now().subtract(Duration(days: 31*i))).millisecondsSinceEpoch,
-        'money': (rng.nextDouble() - 0.5) * 100
+    return List.generate(DateTime.now().month, (i) {
+        return {
+            'dt': toMonth(DateTime.now().subtract(Duration(days: 31*i))).millisecondsSinceEpoch,
+            'money': (rng.nextDouble() - 0.5) * 100
+        };
     });
 }
 
 Future<List<Map<String, dynamic>>> _getAllTimeInfo() async {
-    return List.generate(rng.nextInt(10), (i) => {
+    return List.generate(15, (i) => {
         'dt': toYear(DateTime.now().subtract(Duration(days: 365*i))).millisecondsSinceEpoch,
         'money': (rng.nextDouble() - 0.5) * 100
     });
