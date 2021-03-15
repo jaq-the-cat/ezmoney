@@ -9,9 +9,17 @@ final Future<Database> _database = (() async => openDatabase(
     version:  1,
 ))();
 
-void initDatabase() {
+Future<void> clearDatabase() async {
     WidgetsFlutterBinding.ensureInitialized();
-    populateWithTestData(_database);
+    final db = await _database;
+    return db.execute('DELETE FROM mone');
+}
+
+void initDatabase() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    final db = await _database;
+    await clearDatabase();
+    populateWithTestData(db);
 }
 
 int _firstDayOfMonth(DateTime dt) =>

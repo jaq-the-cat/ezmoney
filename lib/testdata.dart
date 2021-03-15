@@ -5,9 +5,7 @@ final rng = new Random();
 
 DateTime _toSimple(DateTime dt) => new DateTime(dt.year, dt.month, dt.day);
 
-void populateWithTestData(Future<Database> database) async {
-    final Database db = await database;
-    db.execute('DELETE FROM mone');
+void populateWithTestData(Database db) async {
     (await _getMonthlyInfo()).forEach((e) => addInfo(db, e['dt'], e['money']));
     (await _getYearlyInfo()).forEach((e) => addInfo(db, e['dt'], e['money']));
     (await _getAllTimeInfo()).forEach((e) => addInfo(db, e['dt'], e['money']));

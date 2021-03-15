@@ -3,7 +3,7 @@ import 'home.dart';
 import 'infoio.dart';
 
 void main() {
-    initDatabase();
+    clearDatabase();
     runApp(App());
 }
 

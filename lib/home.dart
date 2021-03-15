@@ -76,7 +76,8 @@ Future<String> _moneyDialog(BuildContext context) {
                                         TextButton(
                                             child: Text("ADD"),
                                             onPressed: () {
-                                                addInfo(double.parse(ctrl.text));
+                                                if (ctrl.text.isNotEmpty)
+                                                    addInfo(double.parse(ctrl.text));
                                                 Navigator.of(context).pop(ctrl.text);
                                             },
                                         ),
