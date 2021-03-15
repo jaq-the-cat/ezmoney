@@ -74,9 +74,9 @@ Widget genNetList(NLType type) {
             return Container(
                 margin: EdgeInsets.only(top: _margin),
                 child: ListView(
-                    children: List<Widget>.from(snapshot.data.map((pair) =>
-                        moneyItem(net: pair.last,
-                            date: _dtToString(type, pair.first))
+                    children: List<Widget>.from(snapshot.data.map((row) =>
+                        moneyItem(net: row["money"],
+                            date: _dtToString(type, DateTime.fromMillisecondsSinceEpoch(row["dt"])))
                     )),
                 )
             );
