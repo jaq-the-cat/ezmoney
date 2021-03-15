@@ -59,9 +59,41 @@ Future<List<Map<String, dynamic>>> getMonthlyInfo() async {
 }
 
 Future<List<Map<String, dynamic>>> getYearlyInfo() async {
-    return _doMoneQuery(_firstDayOfYear(DateTime.now()));
+    List<Map<String, dynamic>> proc = [];
+    final r = await _doMoneQuery(_firstDayOfYear(DateTime.now()));
+    Map<int, double> monthData = {};
+    r.forEach((row) {
+        final DateTime dt = DateTime.fromMillisecondsSinceEpoch(row['dt']);
+        if (monthData.containsKey(dt.month))
+            monthData[dt.month] += row['money'];
+        else
+            monthData[dt.month] = row['money'];
+    });
+    monthData.forEach((month, money) {
+        proc.add({
+            'dt': DateTime(DateTime.now().year, month, 1).millisecondsSinceEpoch,
+            'money': money,
+        });
+    });
+    return proc;
 }
 
 Future<List<Map<String, dynamic>>> getAllTimeInfo() async {
-    return _doMoneQuery();
+    List<Map<String, dynamic>> proc = [];
+    final r = await _doMoneQuery();
+    Map<int, double> yearData = {};
+    r.forEach((row) {
+        final DateTime dt = DateTime.fromMillisecondsSinceEpoch(row['dt']);
+        if (yearData.containsKey(dt.year))
+            yearData[dt.year] += row['money'];
+        else
+            yearData[dt.year] = row['money'];
+    });
+    yearData.forEach((year, money) {
+        proc.add({
+            'dt': DateTime(year, 1, 1).millisecondsSinceEpoch,
+            'money': money,
+        });
+    });
+    return proc;
 }

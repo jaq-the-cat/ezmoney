@@ -3,6 +3,8 @@ import 'dart:math';
 
 final rng = new Random();
 
+DateTime _toSimple(DateTime dt) => new DateTime(dt.year, dt.month, dt.day);
+
 void populateWithTestData(Future<Database> database) async {
     final Database db = await database;
     db.execute('DELETE FROM mone');
@@ -24,7 +26,7 @@ DateTime toYear(DateTime dt) => DateTime(dt.year);
 
 Future<List<Map<String, dynamic>>> _getMonthlyInfo() async {
     return List.generate(rng.nextInt(31), (i) => {
-        'dt': DateTime.now().subtract(Duration(days: i)).millisecondsSinceEpoch,
+        'dt': _toSimple(DateTime.now().subtract(Duration(days: i))).millisecondsSinceEpoch,
         'money': (rng.nextDouble() - 0.5) * 100
     });
 }
