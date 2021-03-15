@@ -27,19 +27,66 @@ class HomePageState extends State<HomePage> {
                 body: TabBarView(
                     children: List<Widget>.from(tabs.map((t) => t.last)),
                 ),
-                persistentFooterButtons: <Widget>[
-                    IconButton(
-                        icon: Icon(Icons.add),
-                        color: Colors.deepOrange,
-                        onPressed: () {},
-                    ),
-                    IconButton(
-                        icon: Icon(Icons.remove),
-                        color: Colors.deepOrange,
-                        onPressed: () {},
-                    ),
-                ],
+                floatingActionButton: FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () { _moneyDialog(context, (e) {}); },
+                ),
             ),
         );
     }
 }
+
+Future<String> _moneyDialog(BuildContext context, void Function(String) onConfirm) {
+    final ctrl = TextEditingController();
+    return showDialog<String>(
+        context: context,
+        builder: (BuildContext context) {
+            return Dialog(
+                child: ListView(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    shrinkWrap: true,
+                    children: <Widget>[
+                        Column(
+                            children: <Widget>[
+                                TextFormField(
+                                    autofocus: true,
+                                    controller: ctrl,
+                                    keyboardType: TextInputType.numberWithOptions(signed: true, decimal: true),
+                                    decoration: InputDecoration(
+                                        labelText: "Amount",
+                                        labelStyle: TextStyle(
+                                            color: Colors.deepOrange,
+                                        ),
+                                        fillColor: Colors.deepOrange,
+                                        focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                    color: Colors.deepOrange,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                        TextButton(
+                                            child: Text("CANCEL"),
+                                            onPressed: () => Navigator.of(context).pop(""),
+                                        ),
+                                        TextButton(
+                                            child: Text("ADD"),
+                                            onPressed: () {
+                                                onConfirm(ctrl.text);
+                                                Navigator.of(context).pop(ctrl.text);
+                                            },
+                                        ),
+                                    ]
+                                )
+                            ]
+                        ),
+                    ],
+                ),
+            );
+        }
+    );
+}
+
