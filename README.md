@@ -1,16 +1,15 @@
 # ezmoney
 
-A new Flutter project.
+FOSS Monetary Manager for Android (Flutter)
 
-## Getting Started
+## How to use
 
-This project is a starting point for a Flutter application.
+3 Tabs: Month, Year and All Time.
+Month displays your money gained, or lost, this month.
+Year does the same, for the year.
+All Time is self-explanatory.
 
-A few resources to get you started if this is your first Flutter project:
+To add or remove money, simply click the '+' button on the bottom right corner
+and type in a value.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Not yet published
