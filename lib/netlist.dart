@@ -59,9 +59,9 @@ String _toMoneyString(double net) {
     String snet = net.toStringAsFixed(2);
     if (snet.startsWith('-')) {
         snet = snet.substring(1, snet.length);
-        snet = "-\$" + snet;
+        snet = "-¤" + snet;
     } else {
-        snet = "\$" + snet;
+        snet = "¤" + snet;
     }
     return snet;
 }
