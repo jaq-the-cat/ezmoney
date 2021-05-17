@@ -15,7 +15,7 @@ Future<void> clearDatabase() async {
     return db.execute('DELETE FROM mone');
 }
 
-void initDatabase() async {
+Future<void> initDatabase() async {
     WidgetsFlutterBinding.ensureInitialized();
     final db = await _database;
     await clearDatabase();
