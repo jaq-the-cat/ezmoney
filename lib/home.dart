@@ -30,7 +30,11 @@ class HomePageState extends State<HomePage> {
                 ),
                 floatingActionButton: FloatingActionButton(
                     child: Icon(Icons.add),
-                    onPressed: () => _moneyDialog(context).then((v) => setState(() {})),
+                    onPressed: () => _moneyDialog(context).then((v) =>
+                        addInfo(double.tryParse(v) ?? 0.0).then((_) {
+                            setState(() => {});
+                        })
+                    )
                 ),
             ),
         );
@@ -75,11 +79,7 @@ Future<String> _moneyDialog(BuildContext context) {
                                         ),
                                         TextButton(
                                             child: Text("ADD"),
-                                            onPressed: () {
-                                                if (ctrl.text.isNotEmpty)
-                                                    addInfo(double.parse(ctrl.text));
-                                                Navigator.of(context).pop(ctrl.text);
-                                            },
+                                            onPressed: () => Navigator.of(context).pop(ctrl.text),
                                         ),
                                     ]
                                 )
