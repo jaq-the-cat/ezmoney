@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ezmoney">
+    package="com.ezapps.ezmoney">
    <application
         android:label="ezmoney"
         android:icon="@mipmap/ic_launcher">
