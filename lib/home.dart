@@ -30,11 +30,12 @@ class HomePageState extends State<HomePage> {
                 ),
                 floatingActionButton: FloatingActionButton(
                     child: Icon(Icons.add),
-                    onPressed: () => _moneyDialog(context).then((v) =>
-                        addInfo(double.tryParse(v) ?? 0.0).then((_) {
+                    onPressed: () => _moneyDialog(context).then((v) {
+                        if (v != null && double.tryParse(v) != null)
+                        addInfo(double.parse(v)).then((_) {
                             setState(() => {});
-                        })
-                    )
+                        });
+                    })
                 ),
             ),
         );
