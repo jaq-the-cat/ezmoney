@@ -15,7 +15,6 @@ Future<void> addInfo(Database db, int dt, double money) async {
     db.insert(
         'mone',
         {'dt': dt, 'money': money},
-        conflictAlgorithm:  ConflictAlgorithm.replace,
     );
 }
 
