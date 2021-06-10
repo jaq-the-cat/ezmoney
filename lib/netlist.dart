@@ -31,7 +31,27 @@ final _months = [
   "December",
 ];
 
-Widget genNetList(NLType type, Future<List<Map<String, dynamic>>> future) {
+class RecursiveNetList extends StatelessWidget {
+
+  final int dt;
+  final NLType type;
+
+  RecursiveNetList(this.dt, this.type);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(_dtToString(type,
+        DateTime.fromMillisecondsSinceEpoch(dt)))),
+      body: genNetList(_nextType(type), _typeToInfo(type),
+        onClick: (dt) {
+          Navigator.push(context, new MaterialPageRoute(builder: (context) => RecursiveNetList(dt, _nextType(type))));
+        }),
+    );
+  }
+}
+
+Widget genNetList(NLType type, Future<List<Map<String, dynamic>>> future, {Function(int dt) onClick}) {
   return FutureBuilder(
     future: future,
     builder: (context, snapshot) {
@@ -41,7 +61,8 @@ Widget genNetList(NLType type, Future<List<Map<String, dynamic>>> future) {
         child: ListView(
           children: List<Widget>.from(snapshot.data.map((row) =>
             moneyItem(net: row["money"],
-              date: _dtToString(type, DateTime.fromMillisecondsSinceEpoch(row["dt"])))
+              date: _dtToString(type,
+                DateTime.fromMillisecondsSinceEpoch(row["dt"])))
           )),
         )
       );
@@ -58,21 +79,13 @@ Widget moneyItem({double net, String date}) {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.all(10),
-          child: Text(
-            _toMoneyString(net),
-            style: TextStyle(
-              fontSize: _fontSize,
-            )
-          ),
+          child: Text(_toMoneyString(net),
+            style: TextStyle(fontSize: _fontSize)),
         ),
         Row(
           children: <Widget>[
-            Text(
-              date,
-              style: TextStyle(
-                color:  Colors.white24,
-              ),
-            ),
+            Text(date,
+              style: TextStyle(color:  Colors.white24)),
             SizedBox(width: 10),
             Container(
               padding: EdgeInsets.all(10),
@@ -83,14 +96,22 @@ Widget moneyItem({double net, String date}) {
         ),
       ],
     ),
-    decoration: BoxDecoration(
-      border: Border.all(
-        color: net >= 0
-        ? Colors.green
-        : Colors.red
-      ),
-    ),
+    decoration: BoxDecoration(border: Border.all(color: net >= 0
+          ? Colors.green : Colors.red)),
   );
+}
+
+
+Future _typeToInfo(NLType type) {
+  switch(type) {
+    case NLType.Month:
+      return getMonthlyInfo();
+    case NLType.Year:
+      return getYearlyInfo();
+    case NLType.AllTime:
+      return getAllTimeInfo();
+  }
+  return null;
 }
 
 String _dtToString(NLType type, DateTime dt) {
@@ -114,4 +135,16 @@ String _toMoneyString(double net) {
     snet = "¤" + snet;
   }
   return snet;
+}
+
+NLType _nextType(NLType type) {
+  switch (type) {
+    case NLType.AllTime:
+      return NLType.Year;
+    case NLType.Year:
+      return NLType.Month;
+    case NLType.Month:
+      return null;
+  }
+  return null;
 }
