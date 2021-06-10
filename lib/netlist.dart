@@ -51,7 +51,7 @@ class RecursiveNetList extends StatelessWidget {
   }
 }
 
-Widget genNetList(NLType type, Future<List<Map<String, dynamic>>> future, {Function(int dt) onClick}) {
+Widget genNetList(NLType type, Future<List<Map<String, dynamic>>> future, {Function(int) onClick}) {
   return FutureBuilder(
     future: future,
     builder: (context, snapshot) {
@@ -61,8 +61,8 @@ Widget genNetList(NLType type, Future<List<Map<String, dynamic>>> future, {Funct
         child: ListView(
           children: List<Widget>.from(snapshot.data.map((row) =>
             moneyItem(net: row["money"],
-              date: _dtToString(type,
-                DateTime.fromMillisecondsSinceEpoch(row["dt"])))
+              type: type,
+              dt: row["dt"])
           )),
         )
       );
@@ -70,34 +70,37 @@ Widget genNetList(NLType type, Future<List<Map<String, dynamic>>> future, {Funct
   );
 }
 
-Widget moneyItem({double net, String date}) {
-  return Container(
-    margin: EdgeInsets.only(
-      left: _margin, bottom: _margin, right: _margin),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: Text(_toMoneyString(net),
-            style: TextStyle(fontSize: _fontSize)),
-        ),
-        Row(
-          children: <Widget>[
-            Text(date,
-              style: TextStyle(color:  Colors.white24)),
-            SizedBox(width: 10),
-            Container(
-              padding: EdgeInsets.all(10),
-              color: net >= 0 ? Colors.green : Colors.red,
-              child: Icon(net >= 0 ? Icons.add : Icons.remove),
-            )
-          ]
-        ),
-      ],
+Widget moneyItem({double net, NLType type, int dt, Function(int) onClick}) {
+  return InkWell(
+    onTap: () => onClick(dt),
+    child: Container(
+      margin: EdgeInsets.only(
+        left: _margin, bottom: _margin, right: _margin),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Text(_toMoneyString(net),
+              style: TextStyle(fontSize: _fontSize)),
+          ),
+          Row(
+            children: <Widget>[
+              Text(_dtToString(type, DateTime.fromMillisecondsSinceEpoch(dt)),
+                style: TextStyle(color:  Colors.white24)),
+              SizedBox(width: 10),
+              Container(
+                padding: EdgeInsets.all(10),
+                color: net >= 0 ? Colors.green : Colors.red,
+                child: Icon(net >= 0 ? Icons.add : Icons.remove),
+              )
+            ]
+          ),
+        ],
+      ),
+      decoration: BoxDecoration(border: Border.all(color: net >= 0
+            ? Colors.green : Colors.red)),
     ),
-    decoration: BoxDecoration(border: Border.all(color: net >= 0
-          ? Colors.green : Colors.red)),
   );
 }
 
