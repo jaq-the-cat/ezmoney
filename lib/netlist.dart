@@ -31,44 +31,9 @@ final _months = [
   "December",
 ];
 
-Future _typeToInfo(NLType type) {
-  switch(type) {
-    case NLType.Month:
-      return getMonthlyInfo();
-    case NLType.Year:
-      return getYearlyInfo();
-    case NLType.AllTime:
-      return getAllTimeInfo();
-  }
-  return null;
-}
-
-String _dtToString(NLType type, DateTime dt) {
-  switch(type) {
-    case NLType.Month:
-      return _toDateString(dt);
-    case NLType.Year:
-      return _toMonthString(dt);
-    case NLType.AllTime:
-      return _toYearString(dt);
-  }
-  return null;
-}
-
-String _toMoneyString(double net) {
-  String snet = net.toStringAsFixed(2);
-  if (snet.startsWith('-')) {
-    snet = snet.substring(1, snet.length);
-    snet = "-¤" + snet;
-  } else {
-    snet = "¤" + snet;
-  }
-  return snet;
-}
-
-Widget genNetList(NLType type) {
+Widget genNetList(NLType type, Future<List<Map<String, dynamic>>> future) {
   return FutureBuilder(
-    future: _typeToInfo(type),
+    future: future,
     builder: (context, snapshot) {
       if (!snapshot.hasData) return Container();
       return Container(
@@ -126,4 +91,27 @@ Widget moneyItem({double net, String date}) {
       ),
     ),
   );
+}
+
+String _dtToString(NLType type, DateTime dt) {
+  switch(type) {
+    case NLType.Month:
+      return _toDateString(dt);
+    case NLType.Year:
+      return _toMonthString(dt);
+    case NLType.AllTime:
+      return _toYearString(dt);
+  }
+  return null;
+}
+
+String _toMoneyString(double net) {
+  String snet = net.toStringAsFixed(2);
+  if (snet.startsWith('-')) {
+    snet = snet.substring(1, snet.length);
+    snet = "-¤" + snet;
+  } else {
+    snet = "¤" + snet;
+  }
+  return snet;
 }
