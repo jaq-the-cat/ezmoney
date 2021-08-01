@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'infoio.dart';
 
-enum NLType {
-  Month,
-  Year,
-  AllTime,
-}
-
 final double _fontSize = 16.0;
 final double _margin = 10.0;
 
@@ -31,102 +25,115 @@ final _months = [
   "December",
 ];
 
-class RecursiveNetList extends StatelessWidget {
+abstract class RecursiveNetList extends StatelessWidget {
+  final DateTime dt;
+  RecursiveNetList(this.dt);
 
-  final int dt;
-  final NLType type;
+  RecursiveNetList _nextNode(DateTime dt);
+  String _dtToString();
+  Future _getInfo();
 
-  RecursiveNetList(this.dt, this.type);
+  Widget moneyItem({double net, DateTime dt, Function(DateTime) onClick}) {
+    return InkWell(
+      onTap: () => onClick(dt),
+      child: Container(
+        margin: EdgeInsets.only(
+          left: _margin, bottom: _margin, right: _margin),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Text(_toMoneyString(net),
+                style: TextStyle(fontSize: _fontSize)),
+            ),
+            Row(
+              children: <Widget>[
+                Text(_dtToString(),
+                  style: TextStyle(color:  Colors.white24)),
+                SizedBox(width: 10),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  color: net >= 0 ? Colors.green : Colors.red,
+                  child: Icon(net >= 0 ? Icons.add : Icons.remove),
+                )
+              ]
+            ),
+          ],
+        ),
+        decoration: BoxDecoration(border: Border.all(color: net >= 0
+              ? Colors.green : Colors.red)),
+      ),
+    );
+  }
+
+  Widget _genList(Future<List<Map<String, dynamic>>> future, {Function(DateTime) onClick}) {
+    return FutureBuilder(
+      future: future,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return Container();
+        return Container(
+          margin: EdgeInsets.only(top: _margin),
+          child: ListView(
+            children: List<Widget>.from(snapshot.data.map((row) =>
+              moneyItem(net: row["money"],
+                dt: DateTime.fromMillisecondsSinceEpoch(row["dt"]))
+            )),
+          )
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_dtToString(type,
-        DateTime.fromMillisecondsSinceEpoch(dt)))),
-      body: genNetList(_nextType(type), _typeToInfo(type),
+      appBar: AppBar(title: Text(_dtToString())),
+      body: _genList(_getInfo(),
         onClick: (dt) {
-          Navigator.push(context, new MaterialPageRoute(builder: (context) => RecursiveNetList(dt, _nextType(type))));
+          Navigator.push(context, new MaterialPageRoute(builder: (context) => _nextNode(dt)));
         }),
     );
   }
 }
 
-Widget genNetList(NLType type, Future<List<Map<String, dynamic>>> future, {Function(int) onClick}) {
-  return FutureBuilder(
-    future: future,
-    builder: (context, snapshot) {
-      if (!snapshot.hasData) return Container();
-      return Container(
-        margin: EdgeInsets.only(top: _margin),
-        child: ListView(
-          children: List<Widget>.from(snapshot.data.map((row) =>
-            moneyItem(net: row["money"],
-              type: type,
-              dt: row["dt"])
-          )),
-        )
-      );
-    },
-  );
+class MonthNetList extends RecursiveNetList {
+  MonthNetList(DateTime dt) : super(dt);
+
+  @override
+  String _dtToString() => _toDateString(dt);
+
+  @override
+  Future _getInfo() => getMonthlyInfo();
+
+  @override
+  RecursiveNetList _nextNode(DateTime dt) => null;
 }
 
-Widget moneyItem({double net, NLType type, int dt, Function(int) onClick}) {
-  return InkWell(
-    onTap: () => onClick(dt),
-    child: Container(
-      margin: EdgeInsets.only(
-        left: _margin, bottom: _margin, right: _margin),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Text(_toMoneyString(net),
-              style: TextStyle(fontSize: _fontSize)),
-          ),
-          Row(
-            children: <Widget>[
-              Text(_dtToString(type, DateTime.fromMillisecondsSinceEpoch(dt)),
-                style: TextStyle(color:  Colors.white24)),
-              SizedBox(width: 10),
-              Container(
-                padding: EdgeInsets.all(10),
-                color: net >= 0 ? Colors.green : Colors.red,
-                child: Icon(net >= 0 ? Icons.add : Icons.remove),
-              )
-            ]
-          ),
-        ],
-      ),
-      decoration: BoxDecoration(border: Border.all(color: net >= 0
-            ? Colors.green : Colors.red)),
-    ),
-  );
+class YearNetList extends RecursiveNetList {
+  YearNetList(DateTime dt) : super(dt);
+
+  @override
+  String _dtToString() => _toMonthString(dt);
+
+  @override
+  Future _getInfo() => getYearlyInfo();
+
+  @override
+  RecursiveNetList _nextNode(DateTime dt) => MonthNetList(dt);
 }
 
+class AllTimeNetList extends RecursiveNetList {
+  AllTimeNetList(DateTime dt) : super(dt);
 
-Future _typeToInfo(NLType type) {
-  switch(type) {
-    case NLType.Month:
-      return getMonthlyInfo();
-    case NLType.Year:
-      return getYearlyInfo();
-    case NLType.AllTime:
-      return getAllTimeInfo();
-  }
-  return null;
-}
+  @override
+  String _dtToString() => _toYearString(dt);
 
-String _dtToString(NLType type, DateTime dt) {
-  switch(type) {
-    case NLType.Month:
-      return _toDateString(dt);
-    case NLType.Year:
-      return _toMonthString(dt);
-    case NLType.AllTime:
-      return _toYearString(dt);
-  }
-  return null;
+  @override
+  Future _getInfo() => getAllTimeInfo();
+
+  @override
+  RecursiveNetList _nextNode(DateTime dt) => YearNetList(dt);
 }
 
 String _toMoneyString(double net) {
@@ -138,16 +145,4 @@ String _toMoneyString(double net) {
     snet = "¤" + snet;
   }
   return snet;
-}
-
-NLType _nextType(NLType type) {
-  switch (type) {
-    case NLType.AllTime:
-      return NLType.Year;
-    case NLType.Year:
-      return NLType.Month;
-    case NLType.Month:
-      return null;
-  }
-  return null;
 }

@@ -28,13 +28,9 @@ int _firstDayOfMonth(DateTime dt) =>
 int _firstDayOfYear(DateTime dt) =>
   DateTime(dt.year).millisecondsSinceEpoch;
 
-DateTime _toSimple(DateTime dt) => new DateTime(dt.year, dt.month, dt.day);
-
-DateTime _today() => _toSimple(DateTime.now());
-
-Future<void> addInfo(double money) async {
+Future<void> addStatic(double money, DateTime dt) async {
   final Database db = await _database;
-  final int mse = _today().millisecondsSinceEpoch;
+  final int mse = dt.millisecondsSinceEpoch;
   final queryResult = await db.query('mone', where: '"dt" == ?', whereArgs: [mse]);
   if (queryResult.isEmpty) {
     db.insert(

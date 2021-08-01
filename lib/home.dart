@@ -12,9 +12,9 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final List<List<Widget>> tabs = [
-      [Tab(child: Text("Month")), genNetList(NLType.Month, getMonthlyInfo())],
-      [Tab(child: Text("Year")), genNetList(NLType.Year, getYearlyInfo())],
-      [Tab(child: Text("All Time")), genNetList(NLType.AllTime, getAllTimeInfo())],
+      [Tab(child: Text("Month")), MonthNetList(today())],
+      [Tab(child: Text("Year")), YearNetList(today())],
+      [Tab(child: Text("All Time")), AllTimeNetList(today())],
     ];
     return DefaultTabController(
       length: tabs.length,
@@ -32,7 +32,7 @@ class HomePageState extends State<HomePage> {
           child: Icon(Icons.add),
           onPressed: () => _moneyDialog(context).then((v) {
             if (v != null && double.tryParse(v) != null)
-            addInfo(double.parse(v)).then((_) {
+            addStatic(double.parse(v)).then((_) {
               setState(() => {});
             });
           })
