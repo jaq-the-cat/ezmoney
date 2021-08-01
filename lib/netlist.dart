@@ -34,40 +34,40 @@ abstract class RecursiveNetList extends StatelessWidget {
   String _dtToString();
   Future _getInfo();
 
-  @override
   void _onItemTap(BuildContext context, DateTime dt) =>
     Navigator.push(context, new MaterialPageRoute(builder: (context) => _nextNode(dt)));
 
   Widget moneyItem({double net, DateTime dt, Function() onTap}) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.only(
-          left: _margin, bottom: _margin, right: _margin),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(_toMoneyString(net),
-                style: TextStyle(fontSize: _fontSize)),
-            ),
-            Row(
-              children: <Widget>[
-                Text(_dtToString(),
-                  style: TextStyle(color:  Colors.white24)),
-                SizedBox(width: 10),
-                Container(
-                  padding: EdgeInsets.all(10),
-                  color: net >= 0 ? Colors.green : Colors.red,
-                  child: Icon(net >= 0 ? Icons.add : Icons.remove),
-                )
-              ]
-            ),
-          ],
+    return Padding(
+      padding: EdgeInsets.only(bottom: _margin),
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(_toMoneyString(net),
+                  style: TextStyle(fontSize: _fontSize)),
+              ),
+              Row(
+                children: <Widget>[
+                  Text(_dtToString(),
+                    style: TextStyle(color:  Colors.white24)),
+                  SizedBox(width: 10),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    color: net >= 0 ? Colors.green : Colors.red,
+                    child: Icon(net >= 0 ? Icons.add : Icons.remove),
+                  )
+                ]
+              ),
+            ],
+          ),
+          decoration: BoxDecoration(border: Border.all(color: net >= 0
+                ? Colors.green : Colors.red)),
         ),
-        decoration: BoxDecoration(border: Border.all(color: net >= 0
-              ? Colors.green : Colors.red)),
       ),
     );
   }
@@ -78,7 +78,7 @@ abstract class RecursiveNetList extends StatelessWidget {
       builder: (context, snapshot) {
         if (!snapshot.hasData) return Container();
         return Container(
-          margin: EdgeInsets.only(top: _margin),
+          margin: EdgeInsets.only(top: _margin, left: _margin, right: _margin),
           child: ListView(
             children: List<Widget>.from(snapshot.data.map((row) =>
               moneyItem(
