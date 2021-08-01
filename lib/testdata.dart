@@ -8,9 +8,9 @@ DateTime _toSimple(DateTime dt) {
 }
 
 void populateWithTestData(Database db) async {
-  (await _getMonthlyInfo()).forEach((e) => addStatic(db, e['dt'], e['money']));
-  (await _getYearlyInfo()).forEach((e) => addStatic(db, e['dt'], e['money']));
-  (await _getAllTimeInfo()).forEach((e) => addStatic(db, e['dt'], e['money']));
+  _getMonthlyInfo().forEach((e) => addStatic(db, e['dt'], e['money']));
+  _getYearlyInfo().forEach((e) => addStatic(db, e['dt'], e['money']));
+  _getAllTimeInfo().forEach((e) => addStatic(db, e['dt'], e['money']));
 }
 
 Future<void> addStatic(Database db, int dt, double money) async {
@@ -23,14 +23,17 @@ Future<void> addStatic(Database db, int dt, double money) async {
 DateTime toMonth(DateTime dt) => DateTime(dt.year, dt.month);
 DateTime toYear(DateTime dt) => DateTime(dt.year);
 
-Future<List<Map<String, dynamic>>> _getMonthlyInfo() async {
-  return List.generate(DateTime.now().day, (i) => {
-    'dt': _toSimple(DateTime.now().subtract(Duration(days: i))).millisecondsSinceEpoch,
-    'money': (rng.nextDouble() - 0.5) * 100
+List<Map<String, dynamic>> _getMonthlyInfo() {
+  return List.generate(DateTime.now().day, (i) {
+    print(i);
+    return{
+      'dt': _toSimple(DateTime.now().subtract(Duration(days: i))).millisecondsSinceEpoch,
+      'money': (rng.nextDouble() - 0.5) * 100
+    };
   });
 }
 
-Future<List<Map<String, dynamic>>> _getYearlyInfo() async {
+List<Map<String, dynamic>> _getYearlyInfo() {
   return List.generate(DateTime.now().month, (i) {
     return {
       'dt': toMonth(DateTime.now().subtract(Duration(days: 31*i))).millisecondsSinceEpoch,
@@ -39,7 +42,7 @@ Future<List<Map<String, dynamic>>> _getYearlyInfo() async {
   });
 }
 
-Future<List<Map<String, dynamic>>> _getAllTimeInfo() async {
+List<Map<String, dynamic>> _getAllTimeInfo() {
   return List.generate(15, (i) => {
     'dt': toYear(DateTime.now().subtract(Duration(days: 365*i))).millisecondsSinceEpoch,
     'money': (rng.nextDouble() - 0.5) * 100

@@ -22,11 +22,22 @@ Future<void> initDatabase() async {
   populateWithTestData(db);
 }
 
-int _firstDayOfMonth(DateTime dt) =>
-  DateTime(dt.year, dt.month, 1).millisecondsSinceEpoch;
+DateTime _firstDayOfMonth(DateTime dt) =>
+  DateTime(dt.year, dt.month, 1);
 
-int _firstDayOfYear(DateTime dt) =>
-  DateTime(dt.year).millisecondsSinceEpoch;
+DateTime _lastDayOfMonth(DateTime dt) {
+  int month = dt.month;
+  month++;
+  if (month > 12)
+    month = 1;
+  return DateTime(dt.year, month, 1).add(Duration(hours: -24));
+}
+
+DateTime _firstDayOfYear(DateTime dt) =>
+  DateTime(dt.year);
+
+DateTime _lastDayOfYear(DateTime dt) =>
+  DateTime(dt.year+1).add(Duration(hours: -24));
 
 Future<void> addStatic(double money, DateTime dt) async {
   final Database db = await _database;
@@ -50,21 +61,25 @@ Future<void> addStatic(double money, DateTime dt) async {
   }
 }
 
-Future<List<Map<String, dynamic>>> _doMoneQuery([int timestamp]) async {
+Future<List<Map<String, dynamic>>> _doMoneQuery([int starttimestamp, int endtimestamp]) async {
   final Database db = await _database;
   return List<Map<String, dynamic>>.from(await db.query('mone',
-    where: '"dt" >= ?',
-    whereArgs: [timestamp ?? 0],
+    where: '"dt" >= ? AND "dt" < ?',
+    whereArgs: [starttimestamp ?? 0, endtimestamp ?? DateTime.now().millisecondsSinceEpoch],
   ));
 }
 
-Future<List<Map<String, dynamic>>> getMonthlyInfo() async {
-  return _doMoneQuery(_firstDayOfMonth(DateTime.now()));
+Future<List<Map<String, dynamic>>> getMonthlyInfo(DateTime month) async {
+  return _doMoneQuery(
+    _firstDayOfMonth(month).millisecondsSinceEpoch,
+    _lastDayOfMonth(month).millisecondsSinceEpoch);
 }
 
-Future<List<Map<String, dynamic>>> getYearlyInfo() async {
+Future<List<Map<String, dynamic>>> getYearlyInfo(DateTime year) async {
   List<Map<String, dynamic>> proc = [];
-  final r = await _doMoneQuery(_firstDayOfYear(DateTime.now()));
+  final r = await _doMoneQuery(
+    _firstDayOfYear(year).millisecondsSinceEpoch,
+    _lastDayOfYear(year).millisecondsSinceEpoch);
   Map<int, double> monthData = {};
   r.forEach((row) {
     final DateTime dt = DateTime.fromMillisecondsSinceEpoch(row['dt']);
