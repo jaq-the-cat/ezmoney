@@ -27,15 +27,20 @@ final _months = [
 
 abstract class RecursiveNetList extends StatelessWidget {
   final DateTime dt;
-  RecursiveNetList(this.dt);
+  final String appBarTitle;
+  RecursiveNetList(this.dt, this.appBarTitle);
 
   RecursiveNetList _nextNode(DateTime dt);
   String _dtToString();
   Future _getInfo();
 
-  Widget moneyItem({double net, DateTime dt, Function(DateTime) onClick}) {
+  @override
+  void _onItemTap(BuildContext context, DateTime dt) =>
+    Navigator.push(context, new MaterialPageRoute(builder: (context) => _nextNode(dt)));
+
+  Widget moneyItem({double net, DateTime dt, Function() onTap}) {
     return InkWell(
-      onTap: () => onClick(dt),
+      onTap: onTap,
       child: Container(
         margin: EdgeInsets.only(
           left: _margin, bottom: _margin, right: _margin),
@@ -67,7 +72,7 @@ abstract class RecursiveNetList extends StatelessWidget {
     );
   }
 
-  Widget _genList(Future<List<Map<String, dynamic>>> future, {Function(DateTime) onClick}) {
+  Widget _genList(Future<List<Map<String, dynamic>>> future) {
     return FutureBuilder(
       future: future,
       builder: (context, snapshot) {
@@ -76,8 +81,11 @@ abstract class RecursiveNetList extends StatelessWidget {
           margin: EdgeInsets.only(top: _margin),
           child: ListView(
             children: List<Widget>.from(snapshot.data.map((row) =>
-              moneyItem(net: row["money"],
-                dt: DateTime.fromMillisecondsSinceEpoch(row["dt"]))
+              moneyItem(
+                net: row["money"],
+                dt: DateTime.fromMillisecondsSinceEpoch(row["dt"]),
+                onTap: () => _onItemTap(context, dt),
+              )
             )),
           )
         );
@@ -88,17 +96,13 @@ abstract class RecursiveNetList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_dtToString())),
+      appBar: appBarTitle == null ? null : AppBar(title: Text(appBarTitle)),
       body: _genList(_getInfo(),
-        onClick: (dt) {
-          Navigator.push(context, new MaterialPageRoute(builder: (context) => _nextNode(dt)));
-        }),
-    );
+    ));
   }
 }
-
 class MonthNetList extends RecursiveNetList {
-  MonthNetList(DateTime dt) : super(dt);
+  MonthNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle);
 
   @override
   String _dtToString() => _toDateString(dt);
@@ -108,10 +112,12 @@ class MonthNetList extends RecursiveNetList {
 
   @override
   RecursiveNetList _nextNode(DateTime dt) => null;
-}
 
+  @override
+  void _onItemTap(BuildContext context, DateTime dt) => null;
+}
 class YearNetList extends RecursiveNetList {
-  YearNetList(DateTime dt) : super(dt);
+  YearNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle);
 
   @override
   String _dtToString() => _toMonthString(dt);
@@ -120,11 +126,10 @@ class YearNetList extends RecursiveNetList {
   Future _getInfo() => getYearlyInfo();
 
   @override
-  RecursiveNetList _nextNode(DateTime dt) => MonthNetList(dt);
+  RecursiveNetList _nextNode(DateTime dt) => MonthNetList(dt, _toMonthString(dt));
 }
-
 class AllTimeNetList extends RecursiveNetList {
-  AllTimeNetList(DateTime dt) : super(dt);
+  AllTimeNetList(DateTime dt) : super(dt, null);
 
   @override
   String _dtToString() => _toYearString(dt);
@@ -133,7 +138,7 @@ class AllTimeNetList extends RecursiveNetList {
   Future _getInfo() => getAllTimeInfo();
 
   @override
-  RecursiveNetList _nextNode(DateTime dt) => YearNetList(dt);
+  RecursiveNetList _nextNode(DateTime dt) => YearNetList(dt, _toYearString(dt));
 }
 
 String _toMoneyString(double net) {

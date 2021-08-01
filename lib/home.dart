@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'netlist.dart';
 import 'infoio.dart';
+import 'util.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -12,8 +13,8 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final List<List<Widget>> tabs = [
-      [Tab(child: Text("Month")), MonthNetList(today())],
-      [Tab(child: Text("Year")), YearNetList(today())],
+      [Tab(child: Text("Month")), MonthNetList(today(), null)],
+      [Tab(child: Text("Year")), YearNetList(today(), null)],
       [Tab(child: Text("All Time")), AllTimeNetList(today())],
     ];
     return DefaultTabController(
@@ -32,7 +33,7 @@ class HomePageState extends State<HomePage> {
           child: Icon(Icons.add),
           onPressed: () => _moneyDialog(context).then((v) {
             if (v != null && double.tryParse(v) != null)
-            addStatic(double.parse(v)).then((_) {
+            addStatic(double.parse(v), today()).then((_) {
               setState(() => {});
             });
           })
