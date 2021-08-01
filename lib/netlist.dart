@@ -31,7 +31,7 @@ abstract class RecursiveNetList extends StatelessWidget {
   RecursiveNetList(this.dt, this.appBarTitle);
 
   RecursiveNetList _nextNode(DateTime dt);
-  String _dtToString();
+  String _dtToString(DateTime dt);
   Future _getInfo();
 
   void _onItemTap(BuildContext context, DateTime dt) =>
@@ -53,7 +53,7 @@ abstract class RecursiveNetList extends StatelessWidget {
               ),
               Row(
                 children: <Widget>[
-                  Text(_dtToString(),
+                  Text(_dtToString(dt),
                     style: TextStyle(color:  Colors.white24)),
                   SizedBox(width: 10),
                   Container(
@@ -78,8 +78,8 @@ abstract class RecursiveNetList extends StatelessWidget {
       builder: (context, snapshot) {
         if (!snapshot.hasData) return Container();
         return Container(
-          margin: EdgeInsets.only(top: _margin, left: _margin, right: _margin),
           child: ListView(
+            padding: EdgeInsets.only(top: _margin, left: _margin, right: _margin),
             children: List<Widget>.from(snapshot.data.map((row) =>
               moneyItem(
                 net: row["money"],
@@ -105,7 +105,7 @@ class MonthNetList extends RecursiveNetList {
   MonthNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle);
 
   @override
-  String _dtToString() => _toDateString(dt);
+  String _dtToString(DateTime dt) => _toDateString(dt);
 
   @override
   Future _getInfo() => getMonthlyInfo();
@@ -120,7 +120,7 @@ class YearNetList extends RecursiveNetList {
   YearNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle);
 
   @override
-  String _dtToString() => _toMonthString(dt);
+  String _dtToString(DateTime dt) => _toMonthString(dt);
 
   @override
   Future _getInfo() => getYearlyInfo();
@@ -132,7 +132,7 @@ class AllTimeNetList extends RecursiveNetList {
   AllTimeNetList(DateTime dt) : super(dt, null);
 
   @override
-  String _dtToString() => _toYearString(dt);
+  String _dtToString(DateTime dt) => _toYearString(dt);
 
   @override
   Future _getInfo() => getAllTimeInfo();

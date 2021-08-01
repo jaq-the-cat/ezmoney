@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'infoio.dart';
 import 'home.dart';
 
 void main() {
+  initDatabase();
   runApp(App());
 }
 
