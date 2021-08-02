@@ -59,7 +59,9 @@ class _Item extends StatelessWidget {
           InkWell(
             onTap: () {
               moneyDialog(context).then((v) {
-                onAdd(double.tryParse(v) ?? 0.0);
+                double vd = double.tryParse(v);
+                if (vd != null)
+                  onAdd(vd);
               });
             },
             child: Container(

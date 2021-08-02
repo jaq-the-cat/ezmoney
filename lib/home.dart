@@ -43,10 +43,11 @@ class HomePageState extends State<HomePage> {
               label: Text("Manual"),
               icon: Icon(Icons.add),
               onPressed: () => moneyDialog(context).then((v) {
-                if (v != null && double.tryParse(v) != null)
-                addStatic(double.parse(v), today()).then((_) {
-                  setState(() => {});
-                });
+                double vd = double.tryParse(v);
+                if (vd != null)
+                  addStatic(vd, today()).then((_) {
+                    setState(() => {});
+                  });
               })
             ),
           ],

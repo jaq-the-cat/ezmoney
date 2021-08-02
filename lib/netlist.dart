@@ -23,16 +23,19 @@ final _months = [
   "December",
 ];
 
-abstract class RecursiveNetList extends StatelessWidget {
+abstract class RecursiveNetList extends StatefulWidget {
   final DateTime dt;
   final String appBarTitle;
   final noItemLongPress;
   final noItemTap;
-  RecursiveNetList(this.dt, this.appBarTitle, {this.noItemTap=false, this.noItemLongPress=false});
+  final Function() refresh;
+  RecursiveNetList(this.dt, this.appBarTitle, {this.noItemTap=false, this.noItemLongPress=false, this.refresh});
 
   RecursiveNetList _nextNode(DateTime dt);
+
   String _dtToString(DateTime dt);
-  Future _getInfo();
+
+  Future getInfo();
 
   void _onItemLongPress(BuildContext context, int mse) {}
 
@@ -75,7 +78,7 @@ abstract class RecursiveNetList extends StatelessWidget {
     );
   }
 
-  Widget _genList(Future<List<Map<String, dynamic>>> future) {
+  Widget genList(Future<List<Map<String, dynamic>>> future) {
     return FutureBuilder(
       future: future,
       builder: (context, snapshot) {
@@ -98,10 +101,16 @@ abstract class RecursiveNetList extends StatelessWidget {
   }
 
   @override
+  _RecursiveNetListState createState() => _RecursiveNetListState();
+}
+
+class _RecursiveNetListState extends State<RecursiveNetList> {
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarTitle == null ? null : AppBar(title: Text(appBarTitle)),
-      body: _genList(_getInfo(),
+      appBar: widget.appBarTitle == null ? null : AppBar(title: Text(widget.appBarTitle)),
+      body: widget.genList(widget.getInfo(),
     ));
   }
 }
@@ -112,7 +121,7 @@ class MonthNetList extends RecursiveNetList {
   String _dtToString(DateTime dt) => _toDateString(dt);
 
   @override
-  Future _getInfo() => getMonthlyInfo(dt);
+  Future getInfo() => getMonthlyInfo(dt);
 
   @override
   RecursiveNetList _nextNode(DateTime dt) => null;
@@ -123,7 +132,7 @@ class MonthNetList extends RecursiveNetList {
   @override
   void _onItemLongPress(BuildContext context, int mse) {
     String d = DateTime.fromMillisecondsSinceEpoch(mse).toString();
-    removeDialog(context, "all data on $d").then((r) {
+    removeDialog(context, "all data on ${d.substring(0, 10)}").then((r) {
       if (r) removeStatic(mse);
     });
   }
@@ -135,7 +144,7 @@ class YearNetList extends RecursiveNetList {
   String _dtToString(DateTime dt) => _toMonthString(dt);
 
   @override
-  Future _getInfo() => getYearlyInfo(dt);
+  Future getInfo() => getYearlyInfo(dt);
 
   @override
   RecursiveNetList _nextNode(DateTime dt) => MonthNetList(dt, _toMonthString(dt));
@@ -147,7 +156,7 @@ class AllTimeNetList extends RecursiveNetList {
   String _dtToString(DateTime dt) => _toYearString(dt);
 
   @override
-  Future _getInfo() => getAllTimeInfo();
+  Future getInfo() => getAllTimeInfo();
 
   @override
   RecursiveNetList _nextNode(DateTime dt) => YearNetList(dt, _toYearString(dt));
