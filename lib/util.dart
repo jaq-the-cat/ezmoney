@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 final double fontSize = 16.0;
 final double margin = 10.0;
 
-DateTime _toSimple(DateTime dt) => new DateTime(dt.year, dt.month, dt.day);
-DateTime today() => _toSimple(DateTime.now());
+DateTime toSimple(DateTime dt) => new DateTime(dt.year, dt.month, dt.day);
+DateTime today() => toSimple(DateTime.now());
 
 Future<String> moneyDialog(BuildContext context) {
   final ctrl = TextEditingController();

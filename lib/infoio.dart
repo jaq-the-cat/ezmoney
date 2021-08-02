@@ -2,7 +2,13 @@ import 'package:sqflite/sqflite.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'testdata.dart';
+import 'util.dart';
 import 'package:path/path.dart' as path;
+
+class DMY {
+  final int y, m, d;
+  DMY(this.y, this.m, this.d);
+}
 
 final Future<Database> _database = (() async => openDatabase(
   path.join(await getDatabasesPath(), 'data.db'),
@@ -48,20 +54,67 @@ Future<int> _getLastLogin() async {
   return lldt;
 }
 
-Future<int> daysSinceLastLogin() async {
-  int lldt = await _getLastLogin();
-  return Duration(milliseconds: (DateTime.now().millisecondsSinceEpoch - lldt)).inDays;
+Future<Map<String, double>> getRoutineMones() async {
+  final prefs = await SharedPreferences.getInstance();
+  return {
+    "daily": prefs.getDouble("daily"),
+    "weekly": prefs.getDouble("weekly"),
+    "monthly": prefs.getDouble("monthly"),
+    "yearly": prefs.getDouble("yearly"),
+  };
+}
+
+Future<bool> setRoutineMone(String id, double mone) async {
+  final prefs = await SharedPreferences.getInstance();
+  if (['daily', 'weekly', 'monthly', 'yearly'].contains(id)) {
+    prefs.setDouble(id, mone);
+    return true;
+  }
+  return false;
+}
+
+Future<DMY> dmySinceLastLogin() async {
+  DateTime now = today();
+  DateTime then = DateTime.fromMillisecondsSinceEpoch(await _getLastLogin());
+  int years = now.year - then.year;
+  int months = now.month - then.month;
+  int days = now.day - then.day;
+  if (months < 0 || (months == 0 && days < 0)) {
+    years--;
+    months += (days < 0 ? 11 : 12);
+  }
+  if (days < 0) {
+    final monthAgo = DateTime(now.year, now.month - 1, then.day);
+    days = now.difference(monthAgo).inDays + 1;
+  }
+
+  return DMY(years, months, days);
 }
 
 Future<int> weeksSinceLastLogin() async {
-  int lldt = await _getLastLogin();
-  return (Duration(milliseconds: (DateTime.now().millisecondsSinceEpoch - lldt)).inDays ~/ 7);
+  DateTime lldt = DateTime.fromMillisecondsSinceEpoch(await _getLastLogin());
+  return (today().difference(lldt).inDays / 7).round();
 }
 
-Future<int> monthsSinceLastLogin() async {
-}
+Future<double> doRoutineMone() async {
+  final prefs = await SharedPreferences.getInstance();
+  double mone = 0.0;
 
-Future<int> yearsSinceLastLogin() async {
+  final weeks = await weeksSinceLastLogin();
+  double weekly = prefs.getDouble("weekly") ?? 0;
+
+  mone += weeks * weekly;
+
+  final dmy = await dmySinceLastLogin();
+  double daily = prefs.getDouble("daily") ?? 0;
+  double monthly = prefs.getDouble("monthly") ?? 0;
+  double yearly = prefs.getDouble("yearly") ?? 0;
+
+  mone += dmy.d * daily;
+  mone += dmy.m * monthly;
+  mone += dmy.y * yearly;
+
+  return mone;
 }
 
 Future<void> addStatic(double money, DateTime dt) async {

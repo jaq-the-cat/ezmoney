@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'infoio.dart';
 import 'home.dart';
 
-void main() {
-  initDatabase();
+void main() async {
+  await initDatabase();
+  await doRoutineMone();
   runApp(App());
 }
 

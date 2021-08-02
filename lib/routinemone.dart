@@ -17,13 +17,18 @@ class RoutineMone extends StatelessWidget {
       )),
       body: Padding(
         padding: EdgeInsets.all(margin),
-        child: Column(
-          children: [
-            _Item("Daily", 0, (double d) {}),
-            _Item("Weekly", 0, (double d) {}),
-            _Item("Monthly", 0, (double d) {}),
-            _Item("Yearly", 0, (double d) {}),
-          ]
+        child: FutureBuilder(
+          future: getRoutineMones(),
+          builder: (context, snapshot) {
+            return Column(
+              children: [
+                _Item("Daily", snapshot.data["daily"], (double d) => setRoutineMone("daily", d)),
+                _Item("Weekly", snapshot.data["weekly"],  (double d) => setRoutineMone("weekly", d)),
+                _Item("Monthly", snapshot.data["monthly"],  (double d) => setRoutineMone("monthly", d)),
+                _Item("Yearly", snapshot.data["yearly"],  (double d) => setRoutineMone("yearly", d)),
+              ]
+            );
+          }
         ),
       ),
     );
