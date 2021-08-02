@@ -115,6 +115,9 @@ Future<double> doRoutineMone() async {
   mone += dmy.m * monthly;
   mone += dmy.y * yearly;
 
+  // TODO: addStatic on proper days, not login day
+  addStatic(mone, DateTime.now());
+
   return mone;
 }
 
