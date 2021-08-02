@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'netlist.dart';
+import 'routinemone.dart';
 import 'infoio.dart';
 import 'util.dart';
 
@@ -21,76 +22,36 @@ class HomePageState extends State<HomePage> {
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("EZMONEY"),
-          bottom: TabBar(
+          title: TabBar(
             tabs: List<Widget>.from(tabs.map((t) => t.first)),
           ),
         ),
         body: TabBarView(
           children: List<Widget>.from(tabs.map((t) => t.last)),
         ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () => _moneyDialog(context).then((v) {
-            if (v != null && double.tryParse(v) != null)
-            addStatic(double.parse(v), today()).then((_) {
-              setState(() => {});
-            });
-          })
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ElevatedButton.icon(
+              label: Text("Persistent"),
+              icon: Icon(Icons.calendar_today),
+              onPressed: () => Navigator.push(context, new MaterialPageRoute(builder: (context) =>
+                RoutineMone())),
+            ),
+            SizedBox(width: 15),
+            ElevatedButton.icon(
+              label: Text("Manual"),
+              icon: Icon(Icons.add),
+              onPressed: () => moneyDialog(context).then((v) {
+                if (v != null && double.tryParse(v) != null)
+                addStatic(double.parse(v), today()).then((_) {
+                  setState(() => {});
+                });
+              })
+            ),
+          ],
         ),
       ),
     );
   }
 }
-
-Future<String> _moneyDialog(BuildContext context) {
-  final ctrl = TextEditingController();
-  return showDialog<String>(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          shrinkWrap: true,
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                TextFormField(
-                  autofocus: true,
-                  controller: ctrl,
-                  keyboardType: TextInputType.numberWithOptions(signed: true, decimal: true),
-                  decoration: InputDecoration(
-                    labelText: "Amount",
-                    labelStyle: TextStyle(
-                      color: Colors.deepOrange,
-                    ),
-                    fillColor: Colors.deepOrange,
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.deepOrange,
-                      ),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    TextButton(
-                      child: Text("CANCEL"),
-                      onPressed: () => Navigator.of(context).pop(""),
-                    ),
-                    TextButton(
-                      child: Text("ADD"),
-                      onPressed: () => Navigator.of(context).pop(ctrl.text),
-                    ),
-                  ]
-                )
-              ]
-            ),
-          ],
-        ),
-      );
-    }
-  );
-}
-

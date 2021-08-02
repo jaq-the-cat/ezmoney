@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'infoio.dart';
-
-final double _fontSize = 16.0;
-final double _margin = 10.0;
+import 'util.dart';
 
 String _toDateString(DateTime dt) => dt.toString().split(' ').first.replaceAll('-', '/');
 
@@ -40,7 +38,7 @@ abstract class RecursiveNetList extends StatelessWidget {
 
   Widget moneyItem({double net, DateTime mdt, Function() onTap}) {
     return Padding(
-      padding: EdgeInsets.only(bottom: _margin),
+      padding: EdgeInsets.only(bottom: margin),
       child: InkWell(
         onTap: onTap,
         child: Container(
@@ -50,7 +48,7 @@ abstract class RecursiveNetList extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(10),
                 child: Text(_toMoneyString(net),
-                  style: TextStyle(fontSize: _fontSize)),
+                  style: TextStyle(fontSize: fontSize)),
               ),
               Row(
                 children: <Widget>[
@@ -80,7 +78,7 @@ abstract class RecursiveNetList extends StatelessWidget {
         if (!snapshot.hasData) return Container();
         return Container(
           child: ListView(
-            padding: EdgeInsets.only(top: _margin, left: _margin, right: _margin),
+            padding: EdgeInsets.only(top: margin, left: margin, right: margin),
             children: List<Widget>.from(snapshot.data.map((row) =>
               moneyItem(
                 net: row["money"],
