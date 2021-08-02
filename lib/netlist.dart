@@ -34,8 +34,8 @@ abstract class RecursiveNetList extends StatelessWidget {
   String _dtToString(DateTime dt);
   Future _getInfo();
 
-  void _onItemTap(BuildContext context, DateTime dt) =>
-    Navigator.push(context, new MaterialPageRoute(builder: (context) => _nextNode(dt)));
+  void _onItemTap(BuildContext context, int mse) =>
+    Navigator.push(context, new MaterialPageRoute(builder: (context) => _nextNode(DateTime.fromMillisecondsSinceEpoch(mse))));
 
   Widget moneyItem({double net, DateTime mdt, Function() onTap}) {
     return Padding(
@@ -84,7 +84,7 @@ abstract class RecursiveNetList extends StatelessWidget {
               moneyItem(
                 net: row["money"],
                 mdt: DateTime.fromMillisecondsSinceEpoch(row["dt"]),
-                onTap: () => _onItemTap(context, dt),
+                onTap: () => _onItemTap(context, row["dt"]),
               )
             )),
           )
@@ -114,7 +114,7 @@ class MonthNetList extends RecursiveNetList {
   RecursiveNetList _nextNode(DateTime dt) => null;
 
   @override
-  void _onItemTap(BuildContext context, DateTime dt) => null;
+  void _onItemTap(BuildContext context, int mse) => null;
 }
 class YearNetList extends RecursiveNetList {
   YearNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle);
