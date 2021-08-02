@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'testdata.dart';
 import 'package:path/path.dart' as path;
@@ -6,13 +7,13 @@ import 'package:path/path.dart' as path;
 final Future<Database> _database = (() async => openDatabase(
   path.join(await getDatabasesPath(), 'data.db'),
   onCreate: (db, version) => db.execute("CREATE TABLE mone(dt INTEGER, money REAL)"),
-  version:  1,
+  version: 1,
 ))();
 
 Future<void> clearDatabase() async {
   WidgetsFlutterBinding.ensureInitialized();
   final db = await _database;
-  return db.execute('DELETE FROM mone');
+  db.execute('DELETE FROM mone');
 }
 
 Future<void> initDatabase() async {
@@ -37,6 +38,31 @@ DateTime _firstDayOfYear(DateTime dt) =>
 
 DateTime _lastDayOfYear(DateTime dt) =>
   DateTime(dt.year+1).add(Duration(hours: -24));
+
+Future<int> _getLastLogin() async {
+  final prefs = await SharedPreferences.getInstance();
+  int lldt = prefs.getInt('lldt');
+  if (lldt == null)
+    lldt = DateTime.now().millisecondsSinceEpoch;
+  prefs.setInt('lldt', DateTime.now().millisecondsSinceEpoch);
+  return lldt;
+}
+
+Future<int> daysSinceLastLogin() async {
+  int lldt = await _getLastLogin();
+  return Duration(milliseconds: (DateTime.now().millisecondsSinceEpoch - lldt)).inDays;
+}
+
+Future<int> weeksSinceLastLogin() async {
+  int lldt = await _getLastLogin();
+  return (Duration(milliseconds: (DateTime.now().millisecondsSinceEpoch - lldt)).inDays ~/ 7);
+}
+
+Future<int> monthsSinceLastLogin() async {
+}
+
+Future<int> yearsSinceLastLogin() async {
+}
 
 Future<void> addStatic(double money, DateTime dt) async {
   final Database db = await _database;
