@@ -20,7 +20,6 @@ String toMoneyString(double net) {
 Future<bool> removeDialog(BuildContext context, String thing) {
   return showDialog<bool>(
     context: context,
-    barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return AlertDialog(
         title: const Text('AlertDialog Title'),
@@ -50,7 +49,6 @@ Future<String> moneyDialog(BuildContext context) {
   final ctrl = TextEditingController();
   return showDialog<String>(
     context: context,
-    barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return Dialog(
         child: ListView(
@@ -81,7 +79,7 @@ Future<String> moneyDialog(BuildContext context) {
                   children: <Widget>[
                     TextButton(
                       child: Text("CANCEL"),
-                      onPressed: () => Navigator.of(context).pop(""),
+                      onPressed: () => Navigator.of(context).pop(null),
                     ),
                     TextButton(
                       child: Text("ADD"),
