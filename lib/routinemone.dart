@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'infoio.dart';
 import 'util.dart';
 
-class RoutineMone extends StatelessWidget {
+class RoutineMone extends StatefulWidget {
   RoutineMone();
 
+  @override
+  _RoutineMoneState createState() => _RoutineMoneState();
+}
+
+class _RoutineMoneState extends State<RoutineMone> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,10 +27,10 @@ class RoutineMone extends StatelessWidget {
           builder: (context, snapshot) {
             return Column(
               children: [
-                _Item("Daily", snapshot.data["daily"], (double d) => setRoutineMone("daily", d)),
-                _Item("Weekly", snapshot.data["weekly"],  (double d) => setRoutineMone("weekly", d)),
-                _Item("Monthly", snapshot.data["monthly"],  (double d) => setRoutineMone("monthly", d)),
-                _Item("Yearly", snapshot.data["yearly"],  (double d) => setRoutineMone("yearly", d)),
+                _Item("Daily", snapshot.data["daily"] ?? 0, (double d) => setState(() => setRoutineMone("daily", d))),
+                _Item("Weekly", snapshot.data["weekly"] ?? 0,  (double d) => setState(() => setRoutineMone("weekly", d))),
+                _Item("Monthly", snapshot.data["monthly"] ?? 0,  (double d) => setState(() => setRoutineMone("monthly", d))),
+                _Item("Yearly", snapshot.data["yearly"] ?? 0,  (double d) => setState(() => setRoutineMone("yearly", d))),
               ]
             );
           }

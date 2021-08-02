@@ -169,7 +169,7 @@ Future<List<Map<String, dynamic>>> getYearlyInfo(DateTime year) async {
   });
   monthData.forEach((month, money) {
     proc.add({
-      'dt': DateTime(DateTime.now().year, month, 1).millisecondsSinceEpoch,
+      'dt': DateTime(year.year, month, 1).millisecondsSinceEpoch,
       'money': money,
     });
   });
