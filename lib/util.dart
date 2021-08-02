@@ -17,8 +17,8 @@ String toMoneyString(double net) {
   return snet;
 }
 
-Future<bool> removeDialog(BuildContext context, String thing) {
-  return showDialog<bool>(
+Future<bool?> removeDialog(BuildContext context, String thing) {
+  return showDialog<bool?>(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
@@ -45,9 +45,9 @@ Future<bool> removeDialog(BuildContext context, String thing) {
   );
 }
 
-Future<String> moneyDialog(BuildContext context) {
+Future<String?> moneyDialog(BuildContext context) {
   final ctrl = TextEditingController();
-  return showDialog<String>(
+  return showDialog<String?>(
     context: context,
     builder: (BuildContext context) {
       return Dialog(

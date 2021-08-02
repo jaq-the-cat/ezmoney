@@ -22,16 +22,16 @@ class _RoutineMoneState extends State<RoutineMone> {
       )),
       body: Padding(
         padding: EdgeInsets.all(margin),
-        child: FutureBuilder(
+        child: FutureBuilder<Map<String, double>>(
           future: getRoutineMones(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) return Container();
+            if (snapshot.data == null) return Container();
             return Column(
               children: [
-                _Item("Daily", snapshot.data["daily"] ?? 0, (double d) => setState(() { setRoutineMone("daily", d); })),
-                _Item("Weekly", snapshot.data["weekly"] ?? 0,  (double d) => setState(() { setRoutineMone("weekly", d); })),
-                _Item("Monthly", snapshot.data["monthly"] ?? 0,  (double d) => setState(() { setRoutineMone("monthly", d); })),
-                _Item("Yearly", snapshot.data["yearly"] ?? 0,  (double d) => setState(() { setRoutineMone("yearly", d); })),
+                _Item("Daily", snapshot.data!["daily"] ?? 0, (double d) => setState(() { setRoutineMone("daily", d); })),
+                _Item("Weekly", snapshot.data!["weekly"] ?? 0,  (double d) => setState(() { setRoutineMone("weekly", d); })),
+                _Item("Monthly", snapshot.data!["monthly"] ?? 0,  (double d) => setState(() { setRoutineMone("monthly", d); })),
+                _Item("Yearly", snapshot.data!["yearly"] ?? 0,  (double d) => setState(() { setRoutineMone("yearly", d); })),
               ]
             );
           }
@@ -59,7 +59,7 @@ class _Item extends StatelessWidget {
           InkWell(
             onTap: () {
               moneyDialog(context).then((v) {
-                double vd = double.tryParse(v);
+                double? vd = double.tryParse(v!);
                 if (vd != null)
                   onAdd(vd);
               });

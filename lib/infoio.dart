@@ -11,7 +11,7 @@ class DMY {
 }
 
 final Future<Database> _database = (() async => openDatabase(
-  path.join(await getDatabasesPath(), 'data.db'),
+  path.join((await getDatabasesPath() ?? "Put something here!!"), 'data.db'),
   onCreate: (db, version) => db.execute("CREATE TABLE mone(dt INTEGER, money REAL)"),
   version: 1,
 ))();
@@ -47,7 +47,7 @@ DateTime _lastDayOfYear(DateTime dt) =>
 
 Future<int> _getLastLogin() async {
   final prefs = await SharedPreferences.getInstance();
-  int lldt = prefs.getInt('lldt');
+  int? lldt = prefs.getInt('lldt');
   if (lldt == null)
     lldt = DateTime.now().millisecondsSinceEpoch;
   prefs.setInt('lldt', DateTime.now().millisecondsSinceEpoch);
@@ -57,10 +57,10 @@ Future<int> _getLastLogin() async {
 Future<Map<String, double>> getRoutineMones() async {
   final prefs = await SharedPreferences.getInstance();
   return {
-    "daily": prefs.getDouble("daily"),
-    "weekly": prefs.getDouble("weekly"),
-    "monthly": prefs.getDouble("monthly"),
-    "yearly": prefs.getDouble("yearly"),
+    "daily": prefs.getDouble("daily") ?? 0,
+    "weekly": prefs.getDouble("weekly") ?? 0,
+    "monthly": prefs.getDouble("monthly") ?? 0,
+    "yearly": prefs.getDouble("yearly") ?? 0,
   };
 }
 
@@ -128,7 +128,7 @@ Future<void> addStatic(double money, DateTime dt) async {
       conflictAlgorithm:  ConflictAlgorithm.replace,
     );
   } else {
-    double pmoney = queryResult.single['money'];
+    double pmoney = double.parse(queryResult.single['money']!.toString());
     db.update(
       'mone',
       {'money': pmoney + money},
@@ -144,7 +144,7 @@ Future<void> removeStatic(int mse) async {
   db.delete('mone', where: '"dt" == ?', whereArgs: [mse]);
 }
 
-Future<List<Map<String, dynamic>>> _doMoneQuery([int starttimestamp, int endtimestamp]) async {
+Future<List<Map<String, dynamic>>> _doMoneQuery([int? starttimestamp, int? endtimestamp]) async {
   final Database db = await _database;
   return List<Map<String, dynamic>>.from(await db.query('mone',
     where: '"dt" >= ? AND "dt" < ?',
@@ -163,13 +163,11 @@ Future<List<Map<String, dynamic>>> getYearlyInfo(DateTime year) async {
   final r = await _doMoneQuery(
     _firstDayOfYear(year).millisecondsSinceEpoch,
     _lastDayOfYear(year).millisecondsSinceEpoch);
+
   Map<int, double> monthData = {};
   r.forEach((row) {
     final DateTime dt = DateTime.fromMillisecondsSinceEpoch(row['dt']);
-    if (monthData.containsKey(dt.month))
-      monthData[dt.month] += row['money'];
-    else
-      monthData[dt.month] = row['money'];
+    monthData[dt.month] = (monthData[dt.month] ?? 0) + row['money'];
   });
   monthData.forEach((month, money) {
     proc.add({
@@ -186,10 +184,7 @@ Future<List<Map<String, dynamic>>> getAllTimeInfo() async {
   Map<int, double> yearData = {};
   r.forEach((row) {
     final DateTime dt = DateTime.fromMillisecondsSinceEpoch(row['dt']);
-    if (yearData.containsKey(dt.year))
-      yearData[dt.year] += row['money'];
-    else
-      yearData[dt.year] = row['money'];
+    yearData[dt.year] = (yearData[dt.year] ?? 0) + row['money'];
   });
   yearData.forEach((year, money) {
     proc.add({

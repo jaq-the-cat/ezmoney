@@ -25,24 +25,27 @@ final _months = [
 
 abstract class RecursiveNetList extends StatefulWidget {
   final DateTime dt;
-  final String appBarTitle;
+  final String? appBarTitle;
   final noItemLongPress;
   final noItemTap;
-  final Function() refresh;
+  final Function()? refresh;
   RecursiveNetList(this.dt, this.appBarTitle, {this.noItemTap=false, this.noItemLongPress=false, this.refresh});
 
-  RecursiveNetList _nextNode(DateTime dt);
+  RecursiveNetList? _nextNode(DateTime dt);
 
   String _dtToString(DateTime dt);
 
-  Future getInfo();
+  Future<List<Map<String, dynamic>>> getInfo();
 
   void _onItemLongPress(BuildContext context, int mse) {}
 
-  void _onItemTap(BuildContext context, int mse) =>
-    Navigator.push(context, new MaterialPageRoute(builder: (context) => _nextNode(DateTime.fromMillisecondsSinceEpoch(mse))));
+  void _onItemTap(BuildContext context, int mse) {
+  Widget? e = _nextNode(DateTime.fromMillisecondsSinceEpoch(mse));
+  if (e != null)
+    Navigator.push(context, new MaterialPageRoute(builder: (context) => e));
+  }
 
-  Widget moneyItem({double net, DateTime mdt, Function() onTap, Function() onLongPress}) {
+  Widget moneyItem({required double net, required DateTime mdt, Function()? onTap, Function()? onLongPress}) {
     return Padding(
       padding: EdgeInsets.only(bottom: margin),
       child: InkWell(
@@ -79,14 +82,14 @@ abstract class RecursiveNetList extends StatefulWidget {
   }
 
   Widget genList(Future<List<Map<String, dynamic>>> future) {
-    return FutureBuilder(
+    return FutureBuilder<List<Map<String, dynamic>>>(
       future: future,
       builder: (context, snapshot) {
         if (!snapshot.hasData) return Container();
         return Container(
           child: ListView(
             padding: EdgeInsets.only(top: margin, left: margin, right: margin),
-            children: List<Widget>.from(snapshot.data.map((row) =>
+            children: List<Widget>.from(snapshot.data!.map((row) =>
               moneyItem(
                 net: row["money"],
                 mdt: DateTime.fromMillisecondsSinceEpoch(row["dt"]),
@@ -109,22 +112,22 @@ class _RecursiveNetListState extends State<RecursiveNetList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.appBarTitle == null ? null : AppBar(title: Text(widget.appBarTitle)),
+      appBar: widget.appBarTitle == null ? null : AppBar(title: Text(widget.appBarTitle!)),
       body: widget.genList(widget.getInfo(),
     ));
   }
 }
 class MonthNetList extends RecursiveNetList {
-  MonthNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle, noItemTap: true);
+  MonthNetList(DateTime dt, String? appBarTitle) : super(dt, appBarTitle, noItemTap: true);
 
   @override
   String _dtToString(DateTime dt) => _toDateString(dt);
 
   @override
-  Future getInfo() => getMonthlyInfo(dt);
+  Future<List<Map<String, dynamic>>> getInfo() => getMonthlyInfo(dt);
 
   @override
-  RecursiveNetList _nextNode(DateTime dt) => null;
+  RecursiveNetList? _nextNode(DateTime dt) => null;
 
   @override
   void _onItemTap(BuildContext context, int mse) => null;
@@ -133,18 +136,18 @@ class MonthNetList extends RecursiveNetList {
   void _onItemLongPress(BuildContext context, int mse) {
     String d = DateTime.fromMillisecondsSinceEpoch(mse).toString();
     removeDialog(context, "all data on ${d.substring(0, 10)}").then((r) {
-      if (r) removeStatic(mse);
+      if (r!) removeStatic(mse);
     });
   }
 }
 class YearNetList extends RecursiveNetList {
-  YearNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle, noItemLongPress: true);
+  YearNetList(DateTime dt, String? appBarTitle) : super(dt, appBarTitle, noItemLongPress: true);
 
   @override
   String _dtToString(DateTime dt) => _toMonthString(dt);
 
   @override
-  Future getInfo() => getYearlyInfo(dt);
+  Future<List<Map<String, dynamic>>> getInfo() => getYearlyInfo(dt);
 
   @override
   RecursiveNetList _nextNode(DateTime dt) => MonthNetList(dt, _toMonthString(dt));
@@ -156,7 +159,7 @@ class AllTimeNetList extends RecursiveNetList {
   String _dtToString(DateTime dt) => _toYearString(dt);
 
   @override
-  Future getInfo() => getAllTimeInfo();
+  Future<List<Map<String, dynamic>>> getInfo() => getAllTimeInfo();
 
   @override
   RecursiveNetList _nextNode(DateTime dt) => YearNetList(dt, _toYearString(dt));

@@ -43,7 +43,7 @@ class HomePageState extends State<HomePage> {
               label: Text("Manual"),
               icon: Icon(Icons.add),
               onPressed: () => moneyDialog(context).then((v) {
-                double vd = double.tryParse(v);
+                double? vd = double.tryParse(v ?? "");
                 if (vd != null)
                   addStatic(vd, today()).then((_) {
                     setState(() => {});
