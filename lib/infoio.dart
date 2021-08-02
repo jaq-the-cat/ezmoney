@@ -17,9 +17,8 @@ Future<void> clearDatabase() async {
 
 Future<void> initDatabase() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final db = await _database;
   await clearDatabase();
-  populateWithTestData(db);
+  populateWithTestData();
 }
 
 DateTime _firstDayOfMonth(DateTime dt) =>
@@ -42,6 +41,7 @@ DateTime _lastDayOfYear(DateTime dt) =>
 Future<void> addStatic(double money, DateTime dt) async {
   final Database db = await _database;
   final int mse = dt.millisecondsSinceEpoch;
+  print("$mse : $money");
   final queryResult = await db.query('mone', where: '"dt" == ?', whereArgs: [mse]);
   if (queryResult.isEmpty) {
     db.insert(
