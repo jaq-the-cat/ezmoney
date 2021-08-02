@@ -139,6 +139,11 @@ Future<void> addStatic(double money, DateTime dt) async {
   }
 }
 
+Future<void> removeStatic(int mse) async {
+  final Database db = await _database;
+  db.delete('mone', where: '"dt" == ?', whereArgs: [mse]);
+}
+
 Future<List<Map<String, dynamic>>> _doMoneQuery([int starttimestamp, int endtimestamp]) async {
   final Database db = await _database;
   return List<Map<String, dynamic>>.from(await db.query('mone',

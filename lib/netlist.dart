@@ -122,6 +122,10 @@ class MonthNetList extends RecursiveNetList {
 
   @override
   void _onItemLongPress(BuildContext context, int mse) {
+    String d = DateTime.fromMillisecondsSinceEpoch(mse).toString();
+    removeDialog(context, "all data on $d").then((r) {
+      if (r) removeStatic(mse);
+    });
   }
 }
 class YearNetList extends RecursiveNetList {
