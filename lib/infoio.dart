@@ -120,7 +120,6 @@ Future<double> doRoutineMone() async {
 Future<void> addStatic(double money, DateTime dt) async {
   final Database db = await _database;
   final int mse = dt.millisecondsSinceEpoch;
-  print("$mse : $money");
   final queryResult = await db.query('mone', where: '"dt" == ?', whereArgs: [mse]);
   if (queryResult.isEmpty) {
     db.insert(

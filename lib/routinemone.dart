@@ -25,12 +25,13 @@ class _RoutineMoneState extends State<RoutineMone> {
         child: FutureBuilder(
           future: getRoutineMones(),
           builder: (context, snapshot) {
+            if (!snapshot.hasData) return Container();
             return Column(
               children: [
-                _Item("Daily", snapshot.data["daily"] ?? 0, (double d) => setState(() => setRoutineMone("daily", d))),
-                _Item("Weekly", snapshot.data["weekly"] ?? 0,  (double d) => setState(() => setRoutineMone("weekly", d))),
-                _Item("Monthly", snapshot.data["monthly"] ?? 0,  (double d) => setState(() => setRoutineMone("monthly", d))),
-                _Item("Yearly", snapshot.data["yearly"] ?? 0,  (double d) => setState(() => setRoutineMone("yearly", d))),
+                _Item("Daily", snapshot.data["daily"] ?? 0, (double d) => setState(() { setRoutineMone("daily", d); })),
+                _Item("Weekly", snapshot.data["weekly"] ?? 0,  (double d) => setState(() { setRoutineMone("weekly", d); })),
+                _Item("Monthly", snapshot.data["monthly"] ?? 0,  (double d) => setState(() { setRoutineMone("monthly", d); })),
+                _Item("Yearly", snapshot.data["yearly"] ?? 0,  (double d) => setState(() { setRoutineMone("yearly", d); })),
               ]
             );
           }
@@ -67,7 +68,7 @@ class _Item extends StatelessWidget {
                 children: [
                   Padding(
                     padding: EdgeInsets.all(margin),
-                    child: Text(mone.toString(), style:  TextStyle(fontSize: fontSize)),
+                    child: Text(toMoneyString(mone), style:  TextStyle(fontSize: fontSize)),
                   ),
                   Container(
                     padding: EdgeInsets.all(10.0),

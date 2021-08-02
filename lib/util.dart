@@ -6,6 +6,17 @@ final double margin = 10.0;
 DateTime toSimple(DateTime dt) => new DateTime(dt.year, dt.month, dt.day);
 DateTime today() => toSimple(DateTime.now());
 
+String toMoneyString(double net) {
+  String snet = net.toStringAsFixed(2);
+  if (snet.startsWith('-')) {
+    snet = snet.substring(1, snet.length);
+    snet = "-¤" + snet;
+  } else {
+    snet = "¤" + snet;
+  }
+  return snet;
+}
+
 Future<String> moneyDialog(BuildContext context) {
   final ctrl = TextEditingController();
   return showDialog<String>(

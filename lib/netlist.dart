@@ -47,7 +47,7 @@ abstract class RecursiveNetList extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(10),
-                child: Text(_toMoneyString(net),
+                child: Text(toMoneyString(net),
                   style: TextStyle(fontSize: fontSize)),
               ),
               Row(
@@ -138,15 +138,4 @@ class AllTimeNetList extends RecursiveNetList {
 
   @override
   RecursiveNetList _nextNode(DateTime dt) => YearNetList(dt, _toYearString(dt));
-}
-
-String _toMoneyString(double net) {
-  String snet = net.toStringAsFixed(2);
-  if (snet.startsWith('-')) {
-    snet = snet.substring(1, snet.length);
-    snet = "-¤" + snet;
-  } else {
-    snet = "¤" + snet;
-  }
-  return snet;
 }
