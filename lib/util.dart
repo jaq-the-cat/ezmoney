@@ -17,10 +17,40 @@ String toMoneyString(double net) {
   return snet;
 }
 
+Future<bool> removeDialog(BuildContext context, String thing) {
+  return showDialog<bool>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('AlertDialog Title'),
+        content: SingleChildScrollView(
+          child: Text('Would you really like to delete $thing?'),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('No'),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: Text('Yes'),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    }
+  );
+}
+
 Future<String> moneyDialog(BuildContext context) {
   final ctrl = TextEditingController();
   return showDialog<String>(
     context: context,
+    barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return Dialog(
         child: ListView(
