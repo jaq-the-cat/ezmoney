@@ -11,6 +11,7 @@ class DMY {
 }
 
 final Future<Database> _database = (() async => openDatabase(
+  // TODO: Database path!
   path.join((await getDatabasesPath() ?? "Put something here!!"), 'data.db'),
   onCreate: (db, version) => db.execute("CREATE TABLE mone(dt INTEGER, money REAL)"),
   version: 1,
