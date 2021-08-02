@@ -26,12 +26,14 @@ final _months = [
 abstract class RecursiveNetList extends StatelessWidget {
   final DateTime dt;
   final String appBarTitle;
-  final _noItemTap;
-  RecursiveNetList(this.dt, this.appBarTitle, [this._noItemTap=false]);
+  final noItemLongPress;
+  final noItemTap;
+  RecursiveNetList(this.dt, this.appBarTitle, {this.noItemTap=false, this.noItemLongPress=false});
 
   RecursiveNetList _nextNode(DateTime dt);
   String _dtToString(DateTime dt);
   Future _getInfo();
+
   void _onItemLongPress(BuildContext context, int mse) {}
 
   void _onItemTap(BuildContext context, int mse) =>
@@ -85,8 +87,8 @@ abstract class RecursiveNetList extends StatelessWidget {
               moneyItem(
                 net: row["money"],
                 mdt: DateTime.fromMillisecondsSinceEpoch(row["dt"]),
-                onTap: _noItemTap ? null : () => _onItemTap(context, row["dt"]),
-                onLongPress: () => _onItemLongPress(context, row["dt"]),
+                onTap: noItemTap ? null : () => _onItemTap(context, row["dt"]),
+                onLongPress: noItemLongPress ? null : () => _onItemLongPress(context, row["dt"]),
               )
             )),
           )
@@ -104,7 +106,7 @@ abstract class RecursiveNetList extends StatelessWidget {
   }
 }
 class MonthNetList extends RecursiveNetList {
-  MonthNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle, true);
+  MonthNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle, noItemTap: true);
 
   @override
   String _dtToString(DateTime dt) => _toDateString(dt);
@@ -123,7 +125,7 @@ class MonthNetList extends RecursiveNetList {
   }
 }
 class YearNetList extends RecursiveNetList {
-  YearNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle);
+  YearNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle, noItemLongPress: true);
 
   @override
   String _dtToString(DateTime dt) => _toMonthString(dt);
@@ -135,7 +137,7 @@ class YearNetList extends RecursiveNetList {
   RecursiveNetList _nextNode(DateTime dt) => MonthNetList(dt, _toMonthString(dt));
 }
 class AllTimeNetList extends RecursiveNetList {
-  AllTimeNetList(DateTime dt) : super(dt, null);
+  AllTimeNetList(DateTime dt) : super(dt, null, noItemLongPress: true);
 
   @override
   String _dtToString(DateTime dt) => _toYearString(dt);
