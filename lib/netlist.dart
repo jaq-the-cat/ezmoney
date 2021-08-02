@@ -28,7 +28,8 @@ final _months = [
 abstract class RecursiveNetList extends StatelessWidget {
   final DateTime dt;
   final String appBarTitle;
-  RecursiveNetList(this.dt, this.appBarTitle);
+  final _noItemTap;
+  RecursiveNetList(this.dt, this.appBarTitle, [this._noItemTap=false]);
 
   RecursiveNetList _nextNode(DateTime dt);
   String _dtToString(DateTime dt);
@@ -84,7 +85,7 @@ abstract class RecursiveNetList extends StatelessWidget {
               moneyItem(
                 net: row["money"],
                 mdt: DateTime.fromMillisecondsSinceEpoch(row["dt"]),
-                onTap: () => _onItemTap(context, row["dt"]),
+                onTap: _noItemTap ? null : () => _onItemTap(context, row["dt"]),
               )
             )),
           )
@@ -102,7 +103,7 @@ abstract class RecursiveNetList extends StatelessWidget {
   }
 }
 class MonthNetList extends RecursiveNetList {
-  MonthNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle);
+  MonthNetList(DateTime dt, String appBarTitle) : super(dt, appBarTitle, true);
 
   @override
   String _dtToString(DateTime dt) => _toDateString(dt);
