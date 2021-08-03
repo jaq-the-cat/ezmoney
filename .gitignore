@@ -47,3 +47,4 @@ android/app/release
 
 # Key
 android/key.properties
+keys/keystore.jks
