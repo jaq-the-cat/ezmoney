@@ -22,7 +22,7 @@ Future<bool?> removeDialog(BuildContext context, String thing) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('AlertDialog Title'),
+        title: Text('Delete $thing'),
         content: SingleChildScrollView(
           child: Text('Would you really like to delete $thing?'),
         ),
