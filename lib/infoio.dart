@@ -25,8 +25,8 @@ Future<void> clearDatabase() async {
 
 Future<void> initDatabase() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await clearDatabase();
-  populateWithTestData();
+  /*await clearDatabase();*/
+  /*populateWithTestData();*/
 }
 
 DateTime _firstDayOfMonth(DateTime dt) =>
